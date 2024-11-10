@@ -1,70 +1,97 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+// App.js
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  Alert,
+} from "react-native";
+import { StatusBar } from "expo-status-bar";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+export default function App() {
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [posts, setPosts] = useState<
+    {
+      id: number;
+      title: string;
+      content: string;
+      timestamp: string;
+    }[]
+  >([]);
 
-export default function HomeScreen() {
+  const handleSubmit = () => {
+    if (!title.trim() || !content.trim()) {
+      Alert.alert("Error", "Please fill in both title and content");
+      return;
+    }
+
+    const newPost = {
+      id: Date.now(),
+      title: title.trim(),
+      content: content.trim(),
+      timestamp: new Date().toLocaleString(),
+    };
+
+    setPosts([newPost, ...posts]);
+    setTitle("");
+    setContent("");
+    Alert.alert("Success", "Your post has been uploaded!");
+  };
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
+    <View className="flex-1 bg-white px-4 pt-12">
+      <StatusBar style="auto" />
+
+      <View className="mb-6">
+        <Text className="text-2xl font-bold mb-6 text-center">
+          Create New Post
+        </Text>
+
+        <TextInput
+          className="border border-gray-200 rounded-lg p-3 mb-4 text-base"
+          placeholder="Enter title"
+          value={title}
+          onChangeText={setTitle}
+          maxLength={100}
         />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+
+        <TextInput
+          className="border border-gray-200 rounded-lg p-3 mb-4 h-36 text-base"
+          placeholder="Enter your text here"
+          value={content}
+          onChangeText={setContent}
+          multiline
+          textAlignVertical="top"
+        />
+
+        <TouchableOpacity
+          className="bg-blue-500 p-4 rounded-lg items-center"
+          onPress={handleSubmit}
+        >
+          <Text className="text-white font-bold text-base">
+            Upload
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView className="flex-1">
+        <Text className="text-xl font-bold mb-4">Recent Posts</Text>
+
+        {posts.map((post) => (
+          <View key={post.id} className="bg-gray-50 p-4 rounded-lg mb-4">
+            <Text className="text-lg font-bold mb-2">
+              {post.title}
+            </Text>
+            <Text className="text-base mb-2">{post.content}</Text>
+            <Text className="text-gray-500 text-xs">
+              {post.timestamp}
+            </Text>
+          </View>
+        ))}
+      </ScrollView>
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
