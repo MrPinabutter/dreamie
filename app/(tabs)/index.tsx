@@ -14,6 +14,7 @@ import { nanoid } from "nanoid";
 import { useDreams } from "@/hooks/useDreams";
 import { useImagePicker } from "@/hooks/useImagePicker";
 import { useAudioRecorder } from "@/hooks/useAudioRecorder";
+import AudioVisualizer from "@/components/AudioVisualizer";
 
 export default function App() {
   const [title, setTitle] = useState("");
@@ -24,6 +25,7 @@ export default function App() {
   const {
     audioUri,
     isRecording,
+    meterLevel,
     startRecording,
     stopRecording,
     playSound,
@@ -126,6 +128,8 @@ export default function App() {
             </Text>
           </TouchableOpacity>
         </View>
+
+        <AudioVisualizer isRecording={isRecording} meterLevel={meterLevel} />
 
         {audioUri && (
           <TouchableOpacity

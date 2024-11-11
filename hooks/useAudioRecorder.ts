@@ -1,11 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from "react";
 import { Audio } from "expo-av";
-import { Alert, Platform } from 'react-native';
+import { Alert, Platform } from "react-native";
 
 export function useAudioRecorder() {
   const [recording, setRecording] = useState<Audio.Recording | null>(null);
   const [audioUri, setAudioUri] = useState<string | null>(null);
   const [isRecording, setIsRecording] = useState(false);
+  const [meterLevel, setMeterLevel] = useState(0);
 
   useEffect(() => {
     (async () => {
@@ -21,6 +22,17 @@ export function useAudioRecorder() {
     })();
   }, []);
 
+  const onRecordingStatusUpdate = useCallback(
+    (status: Audio.RecordingStatus) => {
+      if (status.isRecording) {
+        const meter = status.metering ?? -160;
+        const normalized = (meter + 160) / 160;
+        setMeterLevel(normalized);
+      }
+    },
+    []
+  );
+
   const startRecording = async () => {
     try {
       await Audio.setAudioModeAsync({
@@ -29,7 +41,9 @@ export function useAudioRecorder() {
       });
 
       const { recording } = await Audio.Recording.createAsync(
-        Audio.RecordingOptionsPresets.HIGH_QUALITY
+        Audio.RecordingOptionsPresets.HIGH_QUALITY,
+        onRecordingStatusUpdate,
+        100 
       );
 
       setRecording(recording);
@@ -41,12 +55,12 @@ export function useAudioRecorder() {
 
   const stopRecording = async () => {
     if (!recording) return;
-
     try {
       await recording.stopAndUnloadAsync();
       const uri = recording.getURI();
       setRecording(null);
       setIsRecording(false);
+      setMeterLevel(0);
       if (uri) setAudioUri(uri);
     } catch (err) {
       Alert.alert("Failed to stop recording", err as string);
@@ -69,6 +83,7 @@ export function useAudioRecorder() {
   return {
     audioUri,
     isRecording,
+    meterLevel,
     startRecording,
     stopRecording,
     playSound,
