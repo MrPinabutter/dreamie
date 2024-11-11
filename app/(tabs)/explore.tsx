@@ -25,12 +25,12 @@ export default function TabTwoScreen() {
             <Text className="text-lg font-bold mb-2">{dream.title}</Text>
             <Text className="text-base mb-2">{dream.description}</Text>
 
-            {JSON.parse(dream.images || "[]").length > 0 && (
+            {JSON.parse(dream.images ?? "[]").length > 0 && (
               <ScrollView horizontal className="mb-2">
-                {JSON.parse(dream.images || "[]").map(
-                  (uri: string, index: number) => (
+                {JSON.parse(dream.images ?? "[]").map(
+                  (uri: string) => (
                     <Image
-                      key={index}
+                      key={`${dream.id}-${uri}`}
                       source={{ uri }}
                       className="w-20 h-20 rounded-lg mr-2"
                     />

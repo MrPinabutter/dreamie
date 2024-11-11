@@ -18,16 +18,16 @@ import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 export default function App() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  
+
   const { addDream } = useDreams();
   const { images, pickImage, removeImage, clearImages } = useImagePicker(4);
-  const { 
-    audioUri, 
-    isRecording, 
-    startRecording, 
-    stopRecording, 
+  const {
+    audioUri,
+    isRecording,
+    startRecording,
+    stopRecording,
     playSound,
-    clearAudio 
+    clearAudio,
   } = useAudioRecorder();
 
   const handleSubmit = async () => {
@@ -87,7 +87,7 @@ export default function App() {
         {/* Image Preview Section */}
         <View className="flex-row flex-wrap gap-2 mb-4">
           {images.map((uri, index) => (
-            <View key={index} className="relative">
+            <View key={uri} className="relative">
               <Image source={{ uri }} className="w-20 h-20 rounded-lg" />
               <TouchableOpacity
                 className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1"
