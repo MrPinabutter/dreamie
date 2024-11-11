@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { dreamEventEmitter } from "@/events/dreamEvent";
+import { useEffect, useState } from "react";
 import { database } from "../db";
 import type { Dream, NewDream } from "../db/schema";
 
@@ -22,7 +23,7 @@ export function useDreams() {
   const addDream = async (dream: Omit<NewDream, "createdAt" | "updatedAt">) => {
     try {
       await database.createDream(dream);
-      await loadDreams();
+      dreamEventEmitter.emit("dreamCreated");
     } catch (err) {
       setError(err as Error);
       throw err;
@@ -35,7 +36,7 @@ export function useDreams() {
   ) => {
     try {
       await database.updateDream(id, dream);
-      await loadDreams();
+      dreamEventEmitter.emit("dreamUpdated", { id });
     } catch (err) {
       setError(err as Error);
       throw err;
@@ -45,7 +46,7 @@ export function useDreams() {
   const deleteDream = async (id: string) => {
     try {
       await database.deleteDream(id);
-      await loadDreams();
+      dreamEventEmitter.emit("dreamDeleted", { id });
     } catch (err) {
       setError(err as Error);
       throw err;
@@ -54,6 +55,18 @@ export function useDreams() {
 
   useEffect(() => {
     loadDreams();
+  }, []);
+
+  useEffect(() => {
+    const listener = async () => {
+      await loadDreams();
+    };
+
+    dreamEventEmitter.addListener("dreamCreated", listener);
+
+    return () => {
+      dreamEventEmitter.removeListener("dreamCreated", listener);
+    };
   }, []);
 
   return {

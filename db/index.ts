@@ -34,8 +34,24 @@ class DreamsDatabase {
     await this.sqlite.execAsync(query);
   }
 
-  async getDreams() {
-    return this.db.select().from(schema.dreams).all();
+  async getDreams(options?: {
+    sortOrder?: "asc" | "desc";
+    limit?: number;
+    offset?: number;
+  }) {
+    const { sortOrder = "desc", limit = 20, offset = 0 } = options ?? {};
+
+    return this.db
+      .select()
+      .from(schema.dreams)
+      .orderBy(
+        sql`${schema.dreams.date} ${sql.raw(sortOrder)}, ${
+          schema.dreams.createdAt
+        } ${sql.raw(sortOrder)}`
+      )
+      .limit(limit)
+      .offset(offset)
+      .all();
   }
 
   async getDreamById(id: string) {
