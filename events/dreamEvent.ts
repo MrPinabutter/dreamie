@@ -1,3 +1,5 @@
+import { TypedEventEmitter } from "@/utils/EventEmitter";
+
 type DreamEvents = {
   dreamCreated: undefined;
   dreamUpdated: { id: string };

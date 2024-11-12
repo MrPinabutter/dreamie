@@ -7,12 +7,30 @@ export function useDreams() {
   const [dreams, setDreams] = useState<Dream[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [page, setPage] = useState<number>(0);
+  const pageSize = 20;
 
   const loadDreams = async () => {
     try {
       setLoading(true);
-      const result = await database.getDreams();
+      const result = await database.getDreams({ limit: pageSize, offset: 0 });
       setDreams(result);
+    } catch (err) {
+      setError(err as Error);
+    } finally {
+      setPage(1);
+      setLoading(false);
+    }
+  };
+
+  const loadMoreDreams = async () => {
+    try {
+      setLoading(true);
+      const result = await database.getDreams({
+        offset: page * pageSize,
+        limit: pageSize,
+      });
+      setDreams((old) => [...old, ...result]);
     } catch (err) {
       setError(err as Error);
     } finally {
@@ -69,6 +87,10 @@ export function useDreams() {
     };
   }, []);
 
+  useEffect(() => {
+    if (page > 0) loadMoreDreams();
+  }, [page]);
+
   return {
     dreams,
     loading,
@@ -76,6 +98,6 @@ export function useDreams() {
     addDream,
     updateDream,
     deleteDream,
-    refreshDreams: loadDreams,
+    setPage,
   };
 }

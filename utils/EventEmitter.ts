@@ -1,4 +1,4 @@
-class TypedEventEmitter<Events extends Record<string, any>> {
+export class TypedEventEmitter<Events extends Record<string, any>> {
   private listeners: { [K in keyof Events]?: ((arg: Events[K]) => void)[] } =
     {};
 
