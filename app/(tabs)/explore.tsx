@@ -26,7 +26,10 @@ export default function TabTwoScreen() {
         onEndReached={() => setPage((old) => old + 1)}
         onEndReachedThreshold={0.1}
         renderItem={({ item: dream }) => (
-          <View key={dream.id} className="bg-gray-50 p-4 rounded-lg mb-4">
+          <View
+            key={dream.id}
+            className="bg-gray-50 p-4 rounded-lg mb-4 relative"
+          >
             <Text className="text-lg font-bold mb-2">{dream.title}</Text>
             <Text className="text-base mb-2">{dream.description}</Text>
 
@@ -60,6 +63,13 @@ export default function TabTwoScreen() {
             <Text className="text-gray-500 text-xs">
               {new Date(dream.date).toLocaleString()}
             </Text>
+
+            <TouchableOpacity
+              className="bg-red-500 p-2 rounded-full size-6 items-center justify-center -top-3 -left-3"
+              onPress={() => playSound(dream.audioUrl!)}
+            >
+              <Ionicons name="close" size={16} color="white" className="mr-2" />
+            </TouchableOpacity>
           </View>
         )}
         ListFooterComponent={() =>

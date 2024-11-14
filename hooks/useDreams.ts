@@ -88,6 +88,18 @@ export function useDreams() {
   }, []);
 
   useEffect(() => {
+    const listener = async ({ id }: { id: string }) => {
+      setDreams((old) => old.filter((it) => it.id === id));
+    };
+
+    dreamEventEmitter.addListener("dreamDeleted", listener);
+
+    return () => {
+      dreamEventEmitter.removeListener("dreamDeleted", listener);
+    };
+  }, []);
+
+  useEffect(() => {
     if (page > 0) loadMoreDreams();
   }, [page]);
 
