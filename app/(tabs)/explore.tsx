@@ -13,7 +13,7 @@ import {
 } from "react-native";
 
 export default function TabTwoScreen() {
-  const { dreams, setPage, loading } = useDreams();
+  const { dreams, setPage, loading, deleteDream } = useDreams();
   const { playSound } = useAudioRecorder();
 
   return (
@@ -65,10 +65,10 @@ export default function TabTwoScreen() {
             </Text>
 
             <TouchableOpacity
-              className="bg-red-500 p-2 rounded-full size-6 items-center justify-center -top-3 -left-3"
-              onPress={() => playSound(dream.audioUrl!)}
+              className="absolute bg-red-500 rounded-full size-4 items-center justify-center top-2 right-2"
+              onPress={() => deleteDream(dream.id)}
             >
-              <Ionicons name="close" size={16} color="white" className="mr-2" />
+              <Ionicons name="close" size={12} color="white" />
             </TouchableOpacity>
           </View>
         )}

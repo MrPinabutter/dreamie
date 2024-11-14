@@ -89,7 +89,7 @@ export function useDreams() {
 
   useEffect(() => {
     const listener = async ({ id }: { id: string }) => {
-      setDreams((old) => old.filter((it) => it.id === id));
+      setDreams((old) => old.filter((it) => it.id !== id));
     };
 
     dreamEventEmitter.addListener("dreamDeleted", listener);
