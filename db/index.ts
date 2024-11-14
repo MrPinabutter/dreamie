@@ -65,7 +65,7 @@ class DreamsDatabase {
 
   async createDream(dream: Omit<schema.NewDream, "createdAt" | "updatedAt">) {
     try {
-      await this.db
+      this.db
         .insert(schema.dreams)
         .values({
           ...dream,
@@ -81,7 +81,7 @@ class DreamsDatabase {
 
   async updateDream(id: string, dream: Partial<Omit<schema.NewDream, "id">>) {
     try {
-      await this.db
+      this.db
         .update(schema.dreams)
         .set({
           ...dream,
@@ -97,7 +97,7 @@ class DreamsDatabase {
 
   async deleteDream(id: string) {
     try {
-      await this.db
+      this.db
         .delete(schema.dreams)
         .where(sql`id = ${id}`)
         .run();
