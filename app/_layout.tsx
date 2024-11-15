@@ -19,6 +19,9 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+    CreteRound: require("../assets/fonts/CreteRound-Regular.ttf"),
+    CreteRoundItalic: require("../assets/fonts/CreteRound-Italic.ttf"),
+    Faculty: require("../assets/fonts/FacultyGlyphic-Regular.ttf"),
   });
 
   useEffect(() => {

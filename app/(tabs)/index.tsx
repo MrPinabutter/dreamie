@@ -65,12 +65,12 @@ export default function App() {
       <StatusBar style="auto" />
 
       <View className="mb-6">
-        <Text className="text-2xl font-bold mb-6 text-center">
+        <Text className="text-2xl font-faculty mb-6 text-center">
           Create New Dream
         </Text>
 
         <TextInput
-          className="border border-gray-200 rounded-lg p-3 mb-4 text-base"
+          className="border border-gray-200 rounded-lg p-3 mb-4 text-base font-crete"
           placeholder="Enter title"
           value={title}
           onChangeText={setTitle}
@@ -78,7 +78,7 @@ export default function App() {
         />
 
         <TextInput
-          className="border border-gray-200 rounded-lg p-3 mb-4 h-36 text-base"
+          className="border border-gray-200 rounded-lg p-3 mb-4 h-36 text-base font-crete"
           placeholder="Enter your dream here"
           value={content}
           onChangeText={setContent}
@@ -108,7 +108,7 @@ export default function App() {
             onPress={pickImage}
           >
             <Ionicons name="images" size={20} color="black" className="mr-2" />
-            <Text>Add Images ({images.length}/4)</Text>
+            <Text className="font-faculty">Add Images ({images.length}/4)</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -123,7 +123,7 @@ export default function App() {
               color={isRecording ? "white" : "black"}
               className="mr-2"
             />
-            <Text className={isRecording ? "text-white" : "text-black"}>
+            <Text className={`font-faculty ${isRecording ? "text-white" : "text-black"}`}>
               {isRecording ? "Stop Recording" : "Record Audio"}
             </Text>
           </TouchableOpacity>
@@ -145,7 +145,7 @@ export default function App() {
           className="bg-blue-500 p-4 rounded-lg items-center"
           onPress={handleSubmit}
         >
-          <Text className="text-white font-bold text-base">Save Dream</Text>
+          <Text className="text-white text-base font-faculty">Save Dream</Text>
         </TouchableOpacity>
       </View>
     </View>
