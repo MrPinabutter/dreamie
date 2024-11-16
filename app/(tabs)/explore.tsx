@@ -2,11 +2,10 @@ import { Dream } from "@/db/schema";
 import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 import { useDreams } from "@/hooks/useDreams";
 import { Ionicons } from "@expo/vector-icons";
-import { format, getMonth } from "date-fns";
+import { format } from "date-fns";
 import { StatusBar } from "expo-status-bar";
 import {
   ActivityIndicator,
-  FlatList,
   Image,
   ScrollView,
   SectionList,
@@ -22,7 +21,6 @@ export default function TabTwoScreen() {
   const groupDreamsByMonth: Record<string, Dream[]> = dreams.reduce(
     (acc: Record<string, Dream[]>, item) => {
       const month = format(new Date(item.date), "MMMM");
-      console.log("meu teste", acc);
 
       return {
         ...acc,
@@ -31,26 +29,37 @@ export default function TabTwoScreen() {
     },
     {}
   );
-  
+
   return (
-    <View className="flex-1 bg-white px-4 pt-12">
+    <View className="flex-1 bg-white pt-12">
       <StatusBar style="auto" />
-      <Text className="text-3xl mb-4 font-faculty">Recent Dreams</Text>
+
+      <Text className="text-3xl mb-2 font-geist-black px-4">Recent Dreams</Text>
+
       <SectionList
         sections={Object.entries(groupDreamsByMonth).map(([key, value]) => ({
           title: key,
           data: value,
         }))}
+        className="px-4"
         onEndReached={() => setPage((old) => old + 1)}
+        stickySectionHeadersEnabled={true}
         onEndReachedThreshold={0.1}
-        renderSectionHeader={({ section: { title } }) => <Text className="font-crete text-2xl mb-2">{title}</Text>}
+        renderSectionHeader={({ section: { title } }) => (
+          <View className="flex-row items-center bg-white py-4">
+            <Text className="font-faculty text-2xl mr-4 text-slate-800">{title}</Text>
+            <View className="flex-1 h-px bg-slate-500" />
+          </View>
+        )}
         renderItem={({ item: dream }) => (
           <View
             key={dream.id}
             className="bg-gray-50 p-4 rounded-lg mb-4 relative"
           >
-            <Text className="text-lg font-bold mb-2 font-crete">{dream.title}</Text>
-            <Text className="text-base mb-2 font-crete">{dream.description}</Text>
+            <Text className="text-lg mb-2 font-geist-bold">{dream.title}</Text>
+            <Text className="text-base mb-2 font-crete">
+              {dream.description}
+            </Text>
 
             {JSON.parse(dream.images ?? "[]").length > 0 && (
               <ScrollView horizontal className="mb-2">

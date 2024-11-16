@@ -7,7 +7,7 @@ import { sql } from "drizzle-orm";
 const DREAMS_DB = "dreams.db";
 
 class DreamsDatabase {
-  private readonly sqlite: SQLite.SQLiteDatabase;
+  public readonly sqlite: SQLite.SQLiteDatabase;
   private readonly db: ReturnType<typeof drizzle>;
 
   constructor() {

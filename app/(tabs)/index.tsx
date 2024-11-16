@@ -7,6 +7,9 @@ import {
   TouchableOpacity,
   Alert,
   Image,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { Ionicons } from "@expo/vector-icons";
@@ -61,14 +64,18 @@ export default function App() {
   };
 
   return (
-    <View className="flex-1 bg-white px-4 pt-12">
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      className="flex-1 bg-white pt-12"
+    >
       <StatusBar style="auto" />
 
-      <View className="mb-6">
-        <Text className="text-2xl font-faculty mb-6 text-center">
-          Create New Dream
-        </Text>
+      <Text className="text-3xl mb-4 font-geist-black px-4">Create Dream</Text>
 
+      <ScrollView
+        contentContainerClassName="flex-1 pb-4 px-4"
+        keyboardShouldPersistTaps="handled"
+      >
         <TextInput
           className="border border-gray-200 rounded-lg p-3 mb-4 text-base font-crete"
           placeholder="Enter title"
@@ -76,16 +83,14 @@ export default function App() {
           onChangeText={setTitle}
           maxLength={100}
         />
-
         <TextInput
-          className="border border-gray-200 rounded-lg p-3 mb-4 h-36 text-base font-crete"
+          className="border border-gray-200 rounded-lg p-3 mb-4 text-base font-crete min-h-[200px] flex-1"
           placeholder="Enter your dream here"
           value={content}
           onChangeText={setContent}
           multiline
           textAlignVertical="top"
         />
-
         {/* Image Preview Section */}
         <View className="flex-row flex-wrap gap-2 mb-4">
           {images.map((uri, index) => (
@@ -100,7 +105,6 @@ export default function App() {
             </View>
           ))}
         </View>
-
         {/* Media Buttons */}
         <View className="flex-row justify-between mb-4">
           <TouchableOpacity
@@ -108,7 +112,9 @@ export default function App() {
             onPress={pickImage}
           >
             <Ionicons name="images" size={20} color="black" className="mr-2" />
-            <Text className="font-faculty">Add Images ({images.length}/4)</Text>
+            <Text className="font-geist-medium">
+              Add Images ({images.length}/4)
+            </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -123,14 +129,16 @@ export default function App() {
               color={isRecording ? "white" : "black"}
               className="mr-2"
             />
-            <Text className={`font-faculty ${isRecording ? "text-white" : "text-black"}`}>
+            <Text
+              className={`font-geist-medium ${
+                isRecording ? "text-white" : "text-black"
+              }`}
+            >
               {isRecording ? "Stop Recording" : "Record Audio"}
             </Text>
           </TouchableOpacity>
         </View>
-
         <AudioVisualizer isRecording={isRecording} meterLevel={meterLevel} />
-
         {audioUri && (
           <TouchableOpacity
             className="bg-gray-100 p-3 rounded-lg flex-row items-center justify-center mb-4"
@@ -140,14 +148,15 @@ export default function App() {
             <Text>Play Recorded Audio</Text>
           </TouchableOpacity>
         )}
-
         <TouchableOpacity
           className="bg-blue-500 p-4 rounded-lg items-center"
           onPress={handleSubmit}
         >
-          <Text className="text-white text-base font-faculty">Save Dream</Text>
+          <Text className="text-white text-base font-geist-semibold">
+            Save Dream
+          </Text>
         </TouchableOpacity>
-      </View>
-    </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }

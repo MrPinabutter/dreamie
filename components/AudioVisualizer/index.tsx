@@ -7,7 +7,7 @@ interface AudioVisualizerProps {
 }
 
 const NUM_BARS = 12;
-const MIN_BAR_HEIGHT = 10;
+const MIN_BAR_HEIGHT = 6;
 const MAX_BAR_HEIGHT = 60;
 const WAVE_FREQUENCY = 1.5;
 const WAVE_SPEED = 0.1;
