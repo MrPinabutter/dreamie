@@ -5,6 +5,7 @@ import { Alert, Platform } from "react-native";
 export function useAudioRecorder() {
   const [recording, setRecording] = useState<Audio.Recording | null>(null);
   const [audioUri, setAudioUri] = useState<string | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [meterLevel, setMeterLevel] = useState(0);
 
@@ -43,7 +44,7 @@ export function useAudioRecorder() {
       const { recording } = await Audio.Recording.createAsync(
         Audio.RecordingOptionsPresets.HIGH_QUALITY,
         onRecordingStatusUpdate,
-        100 
+        100
       );
 
       setRecording(recording);
@@ -69,10 +70,13 @@ export function useAudioRecorder() {
 
   const playSound = async (uri: string) => {
     try {
+      setIsPlaying(true);
       const { sound } = await Audio.Sound.createAsync({ uri });
       await sound.playAsync();
     } catch (err) {
       Alert.alert("Failed to play sound", err as string);
+    } finally {
+      setIsPlaying(false);
     }
   };
 
@@ -88,6 +92,7 @@ export function useAudioRecorder() {
     startRecording,
     stopRecording,
     playSound,
+    isPlaying,
     clearAudio,
   };
 }

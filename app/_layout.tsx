@@ -7,6 +7,7 @@ import "react-native-reanimated";
 import "../global.css";
 import { database } from "@/db";
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
+import { tailwindFullConfig } from "@/utils";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -53,7 +54,16 @@ export default function RootLayout() {
   return (
     <Stack>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="dream/[dreamId]" options={{headerTitle: ""}} />
+      <Stack.Screen
+        name="dream/[dreamId]"
+        options={{
+          headerTitle: "",
+          headerTintColor: tailwindFullConfig.theme.colors.slate[50],
+          headerStyle: {
+            backgroundColor: tailwindFullConfig.theme.colors.slate[950],
+          },
+        }}
+      />
       <Stack.Screen name="+not-found" />
     </Stack>
   );

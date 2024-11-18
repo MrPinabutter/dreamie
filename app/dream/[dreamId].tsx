@@ -18,6 +18,7 @@ import { useImagePicker } from "@/hooks/useImagePicker";
 import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 import AudioVisualizer from "@/components/AudioVisualizer";
 import { useLocalSearchParams } from "expo-router";
+import { tailwindFullConfig } from "@/utils";
 
 export default function App() {
   const { dreamId } = useLocalSearchParams();
@@ -88,25 +89,27 @@ export default function App() {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      className="flex-1 bg-white pt-4"
+      className="flex-1 bg-white dark:bg-slate-950"
     >
       <StatusBar style="auto" />
 
-      <Text className="text-3xl mb-4 font-geist-black px-4">Update Dream</Text>
+      <Text className="text-3xl mb-4 font-geist-black px-4 dark:text-slate-50">
+        Update Dream
+      </Text>
 
       <ScrollView
         contentContainerClassName="flex-1 pb-4 px-4"
         keyboardShouldPersistTaps="handled"
       >
         <TextInput
-          className="border border-gray-200 rounded-lg p-3 mb-4 text-base font-crete"
+          className="border border-slate-200 rounded-lg p-3 mb-4 text-base font-crete dark:border-slate-600 dark:text-slate-50 dark:placeholder:text-slate-500"
           placeholder="Enter title"
           value={title}
           onChangeText={setTitle}
           maxLength={100}
         />
         <TextInput
-          className="border border-gray-200 rounded-lg p-3 mb-4 text-base font-crete min-h-[200px] flex-1"
+          className="border border-gray-200 rounded-lg p-3 mb-4 text-base font-crete min-h-[200px] flex-1 dark:border-slate-600 dark:text-slate-50 dark:placeholder:text-slate-500"
           placeholder="Enter your dream here"
           value={content}
           onChangeText={setContent}
@@ -121,6 +124,7 @@ export default function App() {
               <TouchableOpacity
                 className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1"
                 onPress={() => removeImage(index)}
+                activeOpacity={0.8}
               >
                 <Ionicons name="close" size={12} color="white" />
               </TouchableOpacity>
@@ -130,30 +134,41 @@ export default function App() {
         {/* Media Buttons */}
         <View className="flex-row justify-between mb-4">
           <TouchableOpacity
-            className="bg-gray-200 p-3 rounded-lg flex-row items-center"
+            className="bg-gray-200 p-3 rounded-lg flex-row items-center dark:bg-emerald-500"
             onPress={pickImage}
+            activeOpacity={0.8}
           >
-            <Ionicons name="images" size={20} color="black" className="mr-2" />
-            <Text className="font-geist-medium">
+            <Ionicons
+              name="images"
+              size={20}
+              color={tailwindFullConfig.theme.colors.slate[800]}
+              className="mr-2"
+            />
+            <Text className="font-geist-medium dark:text-white">
               Add Images ({images.length}/4)
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
+            activeOpacity={0.8}
             className={`p-3 rounded-lg flex-row items-center ${
-              isRecording ? "bg-red-500" : "bg-gray-200"
+              isRecording ? "bg-red-500" : "bg-gray-200 dark:bg-emerald-500"
             }`}
             onPress={isRecording ? stopRecording : startRecording}
           >
             <Ionicons
               name={isRecording ? "stop" : "mic"}
               size={20}
-              color={isRecording ? "white" : "black"}
+              color={
+                isRecording
+                  ? "white"
+                  : tailwindFullConfig.theme.colors.slate[800]
+              }
               className="mr-2"
             />
             <Text
               className={`font-geist-medium ${
-                isRecording ? "text-white" : "text-black"
+                isRecording ? "text-white" : "text-black dark:text-white"
               }`}
             >
               {isRecording ? "Stop Recording" : "Record Audio"}
@@ -164,16 +179,24 @@ export default function App() {
 
         {audioUri && (
           <TouchableOpacity
-            className="bg-gray-100 p-3 rounded-lg flex-row items-center justify-center mb-4"
+            className="bg-gray-100 p-3 rounded-lg flex-row items-center justify-center mb-4 dark:bg-slate-800"
             onPress={() => playSound(audioUri)}
+            activeOpacity={0.8}
           >
-            <Ionicons name="play" size={20} color="black" className="mr-2" />
-            <Text>Play Recorded Audio</Text>
+            <Ionicons
+              name="play"
+              size={20}
+              color={tailwindFullConfig.theme.colors.slate[200]}
+              className="mr-2"
+            />
+            <Text className="dark:text-white">Play Recorded Audio</Text>
           </TouchableOpacity>
         )}
+        
         <TouchableOpacity
-          className="bg-blue-500 p-4 rounded-lg items-center"
+          className="bg-violet-600 p-4 rounded-lg items-center"
           onPress={handleSubmit}
+          activeOpacity={0.8}
         >
           <Text className="text-white text-base font-geist-semibold">
             Update Dream

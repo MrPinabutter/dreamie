@@ -136,5 +136,6 @@ export function useDreams() {
     deleteDream,
     loadDream,
     setPage,
+    refreshDreams: loadDreams
   };
 }
