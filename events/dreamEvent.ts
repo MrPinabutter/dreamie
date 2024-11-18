@@ -1,8 +1,9 @@
+import { Dream } from "@/db/schema";
 import { TypedEventEmitter } from "@/utils/EventEmitter";
 
 type DreamEvents = {
   dreamCreated: undefined;
-  dreamUpdated: { id: string };
+  dreamUpdated: { id: string, dream: Partial<Dream> };
   dreamDeleted: { id: string };
 };
 

@@ -1,5 +1,5 @@
 import "react-native-get-random-values";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -13,22 +13,28 @@ import {
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { Ionicons } from "@expo/vector-icons";
-import { nanoid } from "nanoid";
 import { useDreams } from "@/hooks/useDreams";
 import { useImagePicker } from "@/hooks/useImagePicker";
 import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 import AudioVisualizer from "@/components/AudioVisualizer";
+import { useLocalSearchParams } from "expo-router";
 
 export default function App() {
+  const { dreamId } = useLocalSearchParams();
+
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
-  const { addDream } = useDreams();
-  const { images, pickImage, removeImage, clearImages } = useImagePicker({
-    maxImages: 4,
-  });
+  const { updateDream, loadDream } = useDreams();
+
+  const { images, pickImage, removeImage, clearImages, setImages } =
+    useImagePicker({
+      maxImages: 4,
+    });
+
   const {
     audioUri,
+    setAudioUri,
     isRecording,
     meterLevel,
     startRecording,
@@ -38,14 +44,18 @@ export default function App() {
   } = useAudioRecorder();
 
   const handleSubmit = async () => {
+    if (!title || !content) {
+      Alert.alert("Preencha os campos");
+      return;
+    }
+
     if (!title.trim() || !content.trim()) {
       Alert.alert("Error", "Please fill in both title and content");
       return;
     }
 
     try {
-      await addDream({
-        id: nanoid(),
+      await updateDream(dreamId as string, {
         title: title.trim(),
         description: content.trim(),
         date: new Date().toISOString(),
@@ -58,21 +68,31 @@ export default function App() {
       setContent("");
       clearImages();
       clearAudio();
-      Alert.alert("Success", "Your dream has been saved!");
+      Alert.alert("Success", "Your dream has been updated!");
     } catch (error) {
       console.error("Error saving dream:", error);
-      Alert.alert("Error", "Failed to save your dream");
+      Alert.alert("Error", "Failed to update your dream");
     }
   };
+
+  useEffect(() => {
+    (async () => {
+      const data = await loadDream(dreamId as string);
+      setTitle(data.title);
+      setContent(data.description);
+      setImages(JSON.parse(data.images ?? "[]"));
+      setAudioUri(data.audioUrl);
+    })();
+  }, []);
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      className="flex-1 bg-white pt-12"
+      className="flex-1 bg-white pt-4"
     >
       <StatusBar style="auto" />
 
-      <Text className="text-3xl mb-4 font-geist-black px-4">Create Dream</Text>
+      <Text className="text-3xl mb-4 font-geist-black px-4">Update Dream</Text>
 
       <ScrollView
         contentContainerClassName="flex-1 pb-4 px-4"
@@ -141,6 +161,7 @@ export default function App() {
           </TouchableOpacity>
         </View>
         <AudioVisualizer isRecording={isRecording} meterLevel={meterLevel} />
+
         {audioUri && (
           <TouchableOpacity
             className="bg-gray-100 p-3 rounded-lg flex-row items-center justify-center mb-4"
@@ -155,7 +176,7 @@ export default function App() {
           onPress={handleSubmit}
         >
           <Text className="text-white text-base font-geist-semibold">
-            Save Dream
+            Update Dream
           </Text>
         </TouchableOpacity>
       </ScrollView>

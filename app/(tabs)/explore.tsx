@@ -3,6 +3,7 @@ import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 import { useDreams } from "@/hooks/useDreams";
 import { Ionicons } from "@expo/vector-icons";
 import { format } from "date-fns";
+import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import {
   ActivityIndicator,
@@ -17,6 +18,8 @@ import {
 export default function TabTwoScreen() {
   const { dreams, setPage, loading, deleteDream } = useDreams();
   const { playSound } = useAudioRecorder();
+
+  const router = useRouter();
 
   const groupDreamsByMonth: Record<string, Dream[]> = dreams.reduce(
     (acc: Record<string, Dream[]>, item) => {
@@ -47,14 +50,18 @@ export default function TabTwoScreen() {
         onEndReachedThreshold={0.1}
         renderSectionHeader={({ section: { title } }) => (
           <View className="flex-row items-center bg-white py-4">
-            <Text className="font-faculty text-2xl mr-4 text-slate-800">{title}</Text>
+            <Text className="font-faculty text-2xl mr-4 text-slate-800">
+              {title}
+            </Text>
             <View className="flex-1 h-px bg-slate-500" />
           </View>
         )}
         renderItem={({ item: dream }) => (
-          <View
+          <TouchableOpacity
             key={dream.id}
             className="bg-gray-50 p-4 rounded-lg mb-4 relative"
+            activeOpacity={0.9}
+            onPress={() => router.navigate(`../dream/${dream.id}`)}
           >
             <Text className="text-lg mb-2 font-geist-bold">{dream.title}</Text>
             <Text className="text-base mb-2 font-crete">
@@ -98,7 +105,7 @@ export default function TabTwoScreen() {
             >
               <Ionicons name="close" size={12} color="white" />
             </TouchableOpacity>
-          </View>
+          </TouchableOpacity>
         )}
         ListFooterComponent={() =>
           loading && (

@@ -1,14 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import * as ImagePicker from "expo-image-picker";
-import { Alert, Platform } from 'react-native';
+import { Alert, Platform } from "react-native";
 
-export function useImagePicker(maxImages: number = 4) {
+interface useImagePickerProps {
+  maxImages: number;
+}
+
+export function useImagePicker({ maxImages }: useImagePickerProps) {
   const [images, setImages] = useState<string[]>([]);
 
   useEffect(() => {
     (async () => {
       if (Platform.OS !== "web") {
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        const { status } =
+          await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== "granted") {
           Alert.alert(
             "Permission needed",
@@ -20,8 +25,11 @@ export function useImagePicker(maxImages: number = 4) {
   }, []);
 
   const pickImage = async () => {
-    if (images.length >= maxImages) {
-      Alert.alert("Limit reached", `You can only upload up to ${maxImages} images`);
+    if (!maxImages && images.length >= maxImages) {
+      Alert.alert(
+        "Limit reached",
+        `You can only upload up to ${maxImages} images`
+      );
       return;
     }
 
@@ -57,5 +65,6 @@ export function useImagePicker(maxImages: number = 4) {
     removeImage,
     clearImages,
     hasMaxImages: images.length >= maxImages,
+    setImages
   };
 }

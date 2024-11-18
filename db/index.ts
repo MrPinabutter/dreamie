@@ -81,7 +81,7 @@ class DreamsDatabase {
 
   async updateDream(id: string, dream: Partial<Omit<schema.NewDream, "id">>) {
     try {
-      this.db
+      const result = this.db
         .update(schema.dreams)
         .set({
           ...dream,
@@ -89,6 +89,12 @@ class DreamsDatabase {
         })
         .where(sql`id = ${id}`)
         .run();
+
+      if (!result) {
+        throw new Error(`Dream with id ${id} not found`);
+      }
+
+      return result;
     } catch (error) {
       console.error("Error updating dream:", error);
       throw error;

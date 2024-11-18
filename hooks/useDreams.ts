@@ -23,6 +23,10 @@ export function useDreams() {
     }
   };
 
+  const loadDream = async (id: string) => {
+    return await database.getDreamById(id);
+  };
+
   const loadMoreDreams = async () => {
     try {
       setLoading(true);
@@ -54,7 +58,7 @@ export function useDreams() {
   ) => {
     try {
       await database.updateDream(id, dream);
-      dreamEventEmitter.emit("dreamUpdated", { id });
+      dreamEventEmitter.emit("dreamUpdated", { id, dream });
     } catch (err) {
       setError(err as Error);
       throw err;
@@ -100,6 +104,26 @@ export function useDreams() {
   }, []);
 
   useEffect(() => {
+    const listener = async ({
+      id,
+      dream,
+    }: {
+      id: string;
+      dream: Partial<Dream>;
+    }) => {
+      setDreams((old) =>
+        old.map((it) => (it.id === id ? { ...it, ...dream } : it))
+      );
+    };
+
+    dreamEventEmitter.addListener("dreamUpdated", listener);
+
+    return () => {
+      dreamEventEmitter.removeListener("dreamUpdated", listener);
+    };
+  }, []);
+
+  useEffect(() => {
     if (page > 0) loadMoreDreams();
   }, [page]);
 
@@ -110,6 +134,7 @@ export function useDreams() {
     addDream,
     updateDream,
     deleteDream,
+    loadDream,
     setPage,
   };
 }

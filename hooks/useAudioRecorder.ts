@@ -82,6 +82,7 @@ export function useAudioRecorder() {
 
   return {
     audioUri,
+    setAudioUri,
     isRecording,
     meterLevel,
     startRecording,
