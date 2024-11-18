@@ -62,6 +62,8 @@ export default function RootLayout() {
           headerStyle: {
             backgroundColor: tailwindFullConfig.theme.colors.slate[950],
           },
+          presentation: "transparentModal",
+          animation: "ios_from_right",
         }}
       />
       <Stack.Screen name="+not-found" />
