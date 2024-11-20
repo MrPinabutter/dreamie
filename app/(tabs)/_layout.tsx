@@ -1,4 +1,4 @@
-import { TabBarIcon } from "@/components/navigation/TabBarIcon";
+import { TabBarIcon } from "@/components/atoms/TabBarIcon";
 import { tailwindFullConfig } from "@/utils";
 import { Tabs } from "expo-router";
 import React from "react";
@@ -24,7 +24,7 @@ export default function TabLayout() {
           title: "Home",
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
-              name={focused ? "home" : "home-outline"}
+              name={focused ? "newspaper" : "newspaper-outline"}
               color={color}
             />
           ),
@@ -36,7 +36,7 @@ export default function TabLayout() {
           title: "Explore",
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
-              name={focused ? "code-slash" : "code-slash-outline"}
+              name={focused ? "cloud" : "cloud-outline"}
               color={color}
             />
           ),

@@ -1,3 +1,4 @@
+import { Heading } from "@/components/atoms/Heading";
 import { Dream } from "@/db/schema";
 import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 import { useDreams } from "@/hooks/useDreams";
@@ -38,9 +39,7 @@ export default function TabTwoScreen() {
     <View className="flex-1 bg-white dark:bg-slate-950 pt-12">
       <StatusBar style="auto" />
 
-      <Text className="text-3xl mb-2 font-geist-black px-4 text-slate-950 dark:text-slate-50">
-        Recent Dreams
-      </Text>
+      <Heading text="Recent Dreams" />
 
       <SectionList
         sections={Object.entries(groupDreamsByMonth).map(([key, value]) => ({

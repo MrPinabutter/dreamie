@@ -96,8 +96,8 @@ const AudioVisualizer: React.FC<AudioVisualizerProps> = ({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
-        paddingHorizontal: 20,
-        marginVertical: 10,
+        paddingHorizontal: 10,
+        marginVertical: 0,
       }}
     >
       {bars.map((bar, index) => (

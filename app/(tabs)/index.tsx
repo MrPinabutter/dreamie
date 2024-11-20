@@ -1,24 +1,22 @@
-import "react-native-get-random-values";
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-  Image,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-} from "react-native";
-import { StatusBar } from "expo-status-bar";
-import { Ionicons } from "@expo/vector-icons";
-import { nanoid } from "nanoid";
+import { Button } from "@/components/atoms/Button";
+import { Heading } from "@/components/atoms/Heading";
+import { Input } from "@/components/atoms/Input";
+import AudioVisualizer from "@/components/molecules/AudioVisualizer";
+import { ImagePreviewer } from "@/components/molecules/ImagePreviewer";
+import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 import { useDreams } from "@/hooks/useDreams";
 import { useImagePicker } from "@/hooks/useImagePicker";
-import { useAudioRecorder } from "@/hooks/useAudioRecorder";
-import AudioVisualizer from "@/components/AudioVisualizer";
-import { tailwindFullConfig } from "@/utils";
+import { StatusBar } from "expo-status-bar";
+import { nanoid } from "nanoid";
+import React, { useState } from "react";
+import {
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  View
+} from "react-native";
+import "react-native-get-random-values";
 
 export default function App() {
   const [title, setTitle] = useState("");
@@ -73,23 +71,21 @@ export default function App() {
     >
       <StatusBar style="auto" />
 
-      <Text className="text-3xl mb-4 font-geist-black px-4 dark:text-slate-50">
-        Create Dream
-      </Text>
+      <Heading text="Create Dream" />
 
       <ScrollView
         contentContainerClassName="flex-1 pb-4 px-4"
         keyboardShouldPersistTaps="handled"
       >
-        <TextInput
-          className="border border-slate-200 rounded-lg p-3 mb-4 text-base font-crete dark:border-slate-600 dark:text-slate-50 dark:placeholder:text-slate-500"
+        <Input
           placeholder="Enter title"
           value={title}
           onChangeText={setTitle}
           maxLength={100}
         />
-        <TextInput
-          className="border border-gray-200 rounded-lg p-3 mb-4 text-base font-crete min-h-[200px] flex-1 dark:border-slate-600 dark:text-slate-50 dark:placeholder:text-slate-500"
+
+        <Input
+          className="min-h-[200px] flex-1"
           placeholder="Enter your dream here"
           value={content}
           onChangeText={setContent}
@@ -98,91 +94,44 @@ export default function App() {
         />
 
         {/* Image Preview Section */}
-        <View className="flex-row flex-wrap gap-2 mb-4">
-          {images.map((uri, index) => (
-            <View key={uri} className="relative">
-              <Image source={{ uri }} className="w-20 h-20 rounded-lg" />
-              <TouchableOpacity
-                className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1"
-                onPress={() => removeImage(index)}
-              >
-                <Ionicons name="close" size={12} color="white" />
-              </TouchableOpacity>
-            </View>
-          ))}
-        </View>
+        <ImagePreviewer handleRemove={removeImage} images={images} />
 
         {/* Media Buttons */}
         <View className="flex-row justify-between mb-4">
-          <TouchableOpacity
-            className="bg-gray-200 p-3 rounded-lg flex-row items-center dark:bg-emerald-500"
+          <Button
+            variant="secondary"
             onPress={pickImage}
-            activeOpacity={0.8}
-          >
-            <Ionicons
-              name="images"
-              size={20}
-              color={tailwindFullConfig.theme.colors.slate[800]}
-              className="mr-2"
-            />
-            <Text className="font-geist-medium dark:text-white">
-              Add Images ({images.length}/4)
-            </Text>
-          </TouchableOpacity>
+            icon="images"
+            text={`Add Images (${images.length}/4)`}
+          />
 
-          <TouchableOpacity
-            activeOpacity={0.8}
-            className={`p-3 rounded-lg flex-row items-center ${
-              isRecording ? "bg-red-500" : "bg-gray-200 dark:bg-emerald-500"
-            }`}
+          <Button
+            variant={isRecording ? "destructive" : "secondary"}
             onPress={isRecording ? stopRecording : startRecording}
-          >
-            <Ionicons
-              name={isRecording ? "stop" : "mic"}
-              size={20}
-              color={
-                isRecording
-                  ? "white"
-                  : tailwindFullConfig.theme.colors.slate[800]
-              }
-              className="mr-2"
-            />
-            <Text
-              className={`font-geist-medium ${
-                isRecording ? "text-white" : "text-black dark:text-white"
-              }`}
-            >
-              {isRecording ? "Stop Recording" : "Record Audio"}
-            </Text>
-          </TouchableOpacity>
+            icon={isRecording ? "stop" : "mic"}
+            text={isRecording ? "Stop Recording" : "Record Audio"}
+          />
         </View>
-        <AudioVisualizer isRecording={isRecording} meterLevel={meterLevel} />
-        
-        {audioUri && (
-          <TouchableOpacity
-            className="bg-gray-100 p-3 rounded-lg flex-row items-center justify-center mb-4 dark:bg-slate-800"
-            onPress={() => playSound(audioUri)}
-            activeOpacity={0.8}
-          >
-            <Ionicons
-              name="play"
-              size={20}
-              color={tailwindFullConfig.theme.colors.slate[200]}
-              className="mr-2"
-            />
-            <Text className="dark:text-white">Play Recorded Audio</Text>
-          </TouchableOpacity>
+
+        {isRecording && (
+          <AudioVisualizer isRecording={isRecording} meterLevel={meterLevel} />
         )}
-        
-        <TouchableOpacity
-          className="bg-violet-600 p-4 rounded-lg items-center"
+
+        {audioUri && (
+          <Button
+            variant={"ghost"}
+            onPress={() => playSound(audioUri)}
+            icon={"play"}
+            text={"Play Recorded Audio"}
+            className="mb-4 bg-slate-800"
+          />
+        )}
+
+        <Button
+          text="Save Dream"
           onPress={handleSubmit}
-          activeOpacity={0.8}
-        >
-          <Text className="text-white text-base font-geist-semibold">
-            Save Dream
-          </Text>
-        </TouchableOpacity>
+          disabled={!content && !title}
+        />
       </ScrollView>
     </KeyboardAvoidingView>
   );
