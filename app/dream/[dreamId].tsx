@@ -14,7 +14,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  View
+  View,
 } from "react-native";
 import "react-native-get-random-values";
 
@@ -78,7 +78,7 @@ export default function App() {
   useEffect(() => {
     (async () => {
       const data = await loadDream(dreamId as string);
-      setTitle(data.title);
+      setTitle(data.title ?? "");
       setContent(data.description);
       setImages(JSON.parse(data.images ?? "[]"));
       setAudioUri(data.audioUrl);

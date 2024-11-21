@@ -14,7 +14,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  View
+  View,
 } from "react-native";
 import "react-native-get-random-values";
 
@@ -37,11 +37,6 @@ export default function App() {
   } = useAudioRecorder();
 
   const handleSubmit = async () => {
-    if (!title.trim() || !content.trim()) {
-      Alert.alert("Error", "Please fill in both title and content");
-      return;
-    }
-
     try {
       await addDream({
         id: nanoid(),
