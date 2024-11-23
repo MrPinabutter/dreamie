@@ -7,7 +7,7 @@ import "react-native-reanimated";
 import "../global.css";
 import { database } from "@/db";
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
-import { tailwindFullConfig } from "@/utils";
+import { tailwindColors } from "@/utils";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -58,9 +58,9 @@ export default function RootLayout() {
         name="dream/[dreamId]"
         options={{
           headerTitle: "",
-          headerTintColor: tailwindFullConfig.theme.colors.slate[50],
+          headerTintColor: tailwindColors.slate[50],
           headerStyle: {
-            backgroundColor: tailwindFullConfig.theme.colors.slate[950],
+            backgroundColor: tailwindColors.slate[950],
           },
           presentation: "transparentModal",
           animation: "ios_from_right",

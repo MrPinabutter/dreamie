@@ -1,20 +1,32 @@
 import { TabBarIcon } from "@/components/atoms/TabBarIcon";
-import { tailwindFullConfig } from "@/utils";
+import { tailwindColors } from "@/utils";
 import { Tabs } from "expo-router";
+import { useColorScheme } from "nativewind";
 import React from "react";
 
 export default function TabLayout() {
+  const { colorScheme } = useColorScheme();
+
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveBackgroundColor: tailwindFullConfig.theme.colors.slate[950],
+        tabBarActiveBackgroundColor:
+          colorScheme == "dark"
+            ? tailwindColors.slate[950]
+            : tailwindColors.white,
         tabBarInactiveBackgroundColor:
-          tailwindFullConfig.theme.colors.slate[950],
-        tabBarActiveTintColor: tailwindFullConfig.theme.colors.violet[500],
-        tabBarInactiveTintColor: tailwindFullConfig.theme.colors.slate[50],
+          colorScheme == "dark"
+            ? tailwindColors.slate[950]
+            : tailwindColors.white,
+        tabBarActiveTintColor: tailwindColors.violet[500],
+        tabBarInactiveTintColor:
+          colorScheme == "dark"
+            ? tailwindColors.slate[50]
+            : tailwindColors.neutral[400],
         tabBarStyle: {
           borderTopWidth: 0,
+          elevation: 0,
         },
       }}
     >

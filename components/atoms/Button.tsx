@@ -1,4 +1,4 @@
-import { tailwindFullConfig } from "@/utils";
+import { tailwindColors } from "@/utils";
 import { Ionicons } from "@expo/vector-icons";
 import { TouchableOpacity, TouchableOpacityProps, Text } from "react-native";
 import { ComponentProps } from "react";
@@ -72,19 +72,19 @@ function getIconSize(size: ButtonProps["size"]): number {
 }
 
 function getIconColor(variant: ButtonProps["variant"]): string {
-  if (!variant) return tailwindFullConfig.theme.colors.slate[800];
+  if (!variant) return tailwindColors.slate[800];
 
   switch (variant) {
     case "outline":
     case "ghost":
     case "link":
-      return tailwindFullConfig.theme.colors.violet[600];
+      return tailwindColors.violet[600];
     case "destructive":
     case "primary":
     case "success":
       return "white";
     default:
-      return tailwindFullConfig.theme.colors.slate[800];
+      return tailwindColors.slate[800];
   }
 }
 

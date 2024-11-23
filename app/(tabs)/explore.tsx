@@ -37,7 +37,7 @@ export default function TabTwoScreen() {
   );
 
   return (
-    <View className="flex-1 bg-white dark:bg-slate-950 pt-12">
+    <View className={"flex-1 bg-white dark:bg-slate-950 pt-12"}>
       <StatusBar style="auto" />
 
       <Heading text="Recent Dreams" />
