@@ -103,8 +103,10 @@ export default function TabTwoScreen() {
           icon={"closecircle"}
           onPressIcon={() => {
             toggleSearch();
-            setSearch("");
-            refreshDreams();
+            if (search) {
+              setSearch("");
+              refreshDreams();
+            }
           }}
           value={search}
           onChangeText={(text) => {
