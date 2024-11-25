@@ -12,7 +12,7 @@ const MAX_BAR_HEIGHT = 60;
 const WAVE_FREQUENCY = 1.5;
 const WAVE_SPEED = 0.1;
 
-const AudioVisualizer: React.FC<AudioVisualizerProps> = ({
+export const AudioVisualizer: React.FC<AudioVisualizerProps> = ({
   isRecording,
   meterLevel,
 }) => {
@@ -117,5 +117,3 @@ const AudioVisualizer: React.FC<AudioVisualizerProps> = ({
     </View>
   );
 };
-
-export default AudioVisualizer;

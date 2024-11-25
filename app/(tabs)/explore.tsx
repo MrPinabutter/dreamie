@@ -1,28 +1,19 @@
 import { Heading } from "@/components/atoms/Heading";
+import { Loader } from "@/components/atoms/Loader";
 import { DreamListItem } from "@/components/molecules/DreamListItem";
 import { Dream } from "@/db/schema";
-import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 import { useDreams } from "@/hooks/useDreams";
-import { Ionicons } from "@expo/vector-icons";
 import { format } from "date-fns";
-import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import {
-  ActivityIndicator,
-  Image,
   RefreshControl,
-  ScrollView,
   SectionList,
   Text,
-  TouchableOpacity,
   View,
 } from "react-native";
 
 export default function TabTwoScreen() {
-  const { dreams, setPage, loading, deleteDream, refreshDreams } = useDreams();
-  const { playSound } = useAudioRecorder();
-
-  const router = useRouter();
+  const { dreams, setPage, loading, refreshDreams } = useDreams();
 
   const groupDreamsByMonth: Record<string, Dream[]> = dreams.reduce(
     (acc: Record<string, Dream[]>, item) => {
@@ -68,13 +59,7 @@ export default function TabTwoScreen() {
           </View>
         )}
         renderItem={DreamListItem}
-        ListFooterComponent={() =>
-          loading && (
-            <View className="w-full items-center justify-center">
-              <ActivityIndicator />
-            </View>
-          )
-        }
+        ListFooterComponent={<Loader isLoading={loading} />}
       />
     </View>
   );

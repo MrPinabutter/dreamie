@@ -1,7 +1,7 @@
 import { Button } from "@/components/atoms/Button";
 import { Heading } from "@/components/atoms/Heading";
 import { Input } from "@/components/atoms/Input";
-import AudioVisualizer from "@/components/molecules/AudioVisualizer";
+import { AudioVisualizer } from "@/components/molecules/AudioVisualizer";
 import { ImagePreviewer } from "@/components/molecules/ImagePreviewer";
 import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 import { useDreams } from "@/hooks/useDreams";
