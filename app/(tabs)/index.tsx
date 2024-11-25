@@ -53,8 +53,7 @@ export default function App() {
       clearImages();
       clearAudio();
       Alert.alert("Success", "Your dream has been saved!");
-    } catch (error) {
-      console.error("Error saving dream:", error);
+    } catch {
       Alert.alert("Error", "Failed to save your dream");
     }
   };
@@ -62,14 +61,14 @@ export default function App() {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      className="flex-1 bg-white pt-12 dark:bg-slate-950"
+      className="flex-1 bg-white pt-12 dark:bg-slate-950 px-4"
     >
       <StatusBar style="auto" />
 
       <Heading text="Create Dream" />
 
       <ScrollView
-        contentContainerClassName="flex-1 pb-4 px-4"
+        contentContainerClassName="flex-1 pb-4"
         keyboardShouldPersistTaps="handled"
       >
         <Input

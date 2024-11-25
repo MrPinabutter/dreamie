@@ -27,16 +27,16 @@ export default function TabLayout() {
       screenOptions={{
         headerShown: false,
         tabBarActiveBackgroundColor:
-          colorScheme == "dark"
+          colorScheme === "dark"
             ? tailwindColors.slate[950]
             : tailwindColors.white,
         tabBarInactiveBackgroundColor:
-          colorScheme == "dark"
+          colorScheme === "dark"
             ? tailwindColors.slate[950]
             : tailwindColors.white,
         tabBarActiveTintColor: tailwindColors.violet[500],
         tabBarInactiveTintColor:
-          colorScheme == "dark"
+          colorScheme === "dark"
             ? tailwindColors.slate[50]
             : tailwindColors.neutral[400],
         tabBarStyle: {

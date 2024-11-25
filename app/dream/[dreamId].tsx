@@ -1,7 +1,7 @@
 import { Button } from "@/components/atoms/Button";
 import { Heading } from "@/components/atoms/Heading";
 import { Input } from "@/components/atoms/Input";
-import AudioVisualizer from "@/components/molecules/AudioVisualizer";
+import { AudioVisualizer } from "@/components/molecules/AudioVisualizer";
 import { ImagePreviewer } from "@/components/molecules/ImagePreviewer";
 import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 import { useDreams } from "@/hooks/useDreams";
@@ -88,14 +88,14 @@ export default function App() {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      className="flex-1 bg-white dark:bg-slate-950"
+      className="flex-1 bg-white dark:bg-slate-950 px-4"
     >
       <StatusBar style="auto" />
 
       <Heading text="Update Dream" />
 
       <ScrollView
-        contentContainerClassName="flex-1 pb-4 px-4"
+        contentContainerClassName="flex-1 pb-4"
         keyboardShouldPersistTaps="handled"
       >
         <Input
