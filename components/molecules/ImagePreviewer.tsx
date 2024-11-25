@@ -11,7 +11,7 @@ export const ImagePreviewer = ({
   handleRemove,
 }: ImagePreviewerProps) => {
   return (
-    <View className="flex-row flex-wrap gap-2 mb-4">
+    <View className="flex-row flex-wrap gap-2">
       {images.map((uri, index) => (
         <View key={uri} className="relative">
           <Image source={{ uri }} className="w-20 h-20 rounded-lg" />

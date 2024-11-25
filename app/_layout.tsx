@@ -57,7 +57,7 @@ export default function RootLayout() {
       <Stack.Screen
         name="dream/[dreamId]"
         options={{
-          headerTitle: "",
+          headerShown: false,
           headerTintColor: tailwindColors.slate[50],
           headerStyle: {
             backgroundColor: tailwindColors.slate[950],

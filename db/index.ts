@@ -2,7 +2,7 @@ import { drizzle } from "drizzle-orm/expo-sqlite";
 import * as SQLite from "expo-sqlite";
 
 import * as schema from "./schema";
-import { sql } from "drizzle-orm";
+import { like, or, sql } from "drizzle-orm";
 
 const DREAMS_DB = "dreams.db";
 
@@ -33,17 +33,30 @@ class DreamsDatabase {
 
     await this.sqlite.execAsync(query);
   }
-
   async getDreams(options?: {
     sortOrder?: "asc" | "desc";
     limit?: number;
     offset?: number;
+    search?: string;
   }) {
-    const { sortOrder = "desc", limit = 20, offset = 0 } = options ?? {};
+    const {
+      sortOrder = "desc",
+      limit = 20,
+      offset = 0,
+      search,
+    } = options ?? {};
 
     return this.db
       .select()
       .from(schema.dreams)
+      .where(
+        search
+          ? or(
+              like(schema.dreams.title, `%${search}%`),
+              like(schema.dreams.description, `%${search}%`)
+            )
+          : undefined
+      )
       .orderBy(
         sql`${schema.dreams.date} ${sql.raw(sortOrder)}, ${
           schema.dreams.createdAt

@@ -8,6 +8,12 @@ import { FontAwesome6 } from "@expo/vector-icons";
 import { format } from "date-fns";
 import { StatusBar } from "expo-status-bar";
 import { useColorScheme } from "nativewind";
+import Animated, {
+  withTiming,
+  useAnimatedStyle,
+  Easing,
+  useSharedValue,
+} from "react-native-reanimated";
 import {
   RefreshControl,
   SectionList,
@@ -15,10 +21,30 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { Input } from "@/components/atoms/Input";
+import { useState } from "react";
 
 export default function TabTwoScreen() {
+  const [search, setSearch] = useState("");
   const { dreams, setPage, loading, refreshDreams } = useDreams();
   const { colorScheme } = useColorScheme();
+
+  const searchContainerHeight = useSharedValue(0);
+  const toggleSearch = () => {
+    searchContainerHeight.value = searchContainerHeight.value === 0 ? 48 : 0;
+  };
+
+  const config = {
+    duration: 500,
+    easing: Easing.bezier(0.5, 0.01, 0, 1),
+  };
+
+  const style = useAnimatedStyle(() => {
+    return {
+      height: withTiming(searchContainerHeight.value, config),
+      opacity: withTiming(searchContainerHeight.value === 0 ? 0 : 1, config),
+    };
+  });
 
   const groupDreamsByMonth: Record<string, Dream[]> = dreams.reduce(
     (acc: Record<string, Dream[]>, item) => {
@@ -39,7 +65,9 @@ export default function TabTwoScreen() {
     },
     {
       name: "magnifying-glass",
-      action: () => {},
+      action: () => {
+        toggleSearch();
+      },
     },
   ];
 
@@ -69,6 +97,22 @@ export default function TabTwoScreen() {
           ))}
         </View>
       </View>
+
+      <Animated.View className="mt-4 overflow-hidden px-4" style={style}>
+        <Input
+          icon={"closecircle"}
+          onPressIcon={() => {
+            toggleSearch();
+            setSearch("");
+            refreshDreams();
+          }}
+          value={search}
+          onChangeText={(text) => {
+            setSearch(text);
+            refreshDreams(text);
+          }}
+        />
+      </Animated.View>
 
       <SectionList
         sections={Object.entries(groupDreamsByMonth).map(([key, value]) => ({

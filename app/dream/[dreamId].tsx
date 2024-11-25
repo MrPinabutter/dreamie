@@ -6,8 +6,11 @@ import { ImagePreviewer } from "@/components/molecules/ImagePreviewer";
 import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 import { useDreams } from "@/hooks/useDreams";
 import { useImagePicker } from "@/hooks/useImagePicker";
+import { tailwindColors } from "@/utils";
+import { FontAwesome } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { useColorScheme } from "nativewind";
 import React, { useEffect, useState } from "react";
 import {
   Alert,
@@ -25,7 +28,7 @@ export default function App() {
   const [content, setContent] = useState("");
 
   const { updateDream, loadDream } = useDreams();
-
+  const { colorScheme } = useColorScheme();
   const { images, pickImage, removeImage, clearImages, setImages } =
     useImagePicker({
       maxImages: 4,
@@ -69,8 +72,7 @@ export default function App() {
       clearAudio();
       Alert.alert("Success", "Your dream has been updated!");
       router.back();
-    } catch (error) {
-      console.error("Error saving dream:", error);
+    } catch {
       Alert.alert("Error", "Failed to update your dream");
     }
   };
@@ -83,77 +85,94 @@ export default function App() {
       setImages(JSON.parse(data.images ?? "[]"));
       setAudioUri(data.audioUrl);
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      className="flex-1 bg-white dark:bg-slate-950 px-4"
+      className="flex-1 bg-white dark:bg-slate-950 px-4 pt-12"
     >
       <StatusBar style="auto" />
 
-      <Heading text="Update Dream" />
+      <View className="h-full">
+        <ScrollView
+          contentContainerClassName="pb-4 gap-4 flex-1"
+          keyboardShouldPersistTaps="handled"
+        >
+          <View className="flex-row gap-4">
+            <FontAwesome
+              onPress={router.back}
+              name="arrow-left"
+              size={24}
+              color={tailwindColors.slate[colorScheme === "dark" ? 50 : 950]}
+            />
+            <Heading text="Update Dream" />
+          </View>
 
-      <ScrollView
-        contentContainerClassName="flex-1 pb-4"
-        keyboardShouldPersistTaps="handled"
-      >
-        <Input
-          placeholder="Enter title"
-          value={title}
-          onChangeText={setTitle}
-          maxLength={100}
-        />
-
-        <Input
-          className="min-h-[200px] flex-1"
-          placeholder="Enter your dream here"
-          value={content}
-          onChangeText={setContent}
-          multiline
-          textAlignVertical="top"
-        />
-
-        {/* Image Preview Section */}
-        <ImagePreviewer handleRemove={removeImage} images={images} />
-
-        {/* Media Buttons */}
-        <View className="flex-row justify-between mb-4">
-          <Button
-            variant="secondary"
-            onPress={pickImage}
-            icon="images"
-            text={`Add Images (${images.length}/4)`}
+          <Input
+            placeholder="Enter title"
+            value={title}
+            onChangeText={setTitle}
+            maxLength={100}
           />
 
-          <Button
-            variant={isRecording ? "destructive" : "secondary"}
-            onPress={isRecording ? stopRecording : startRecording}
-            icon={isRecording ? "stop" : "mic"}
-            text={isRecording ? "Stop Recording" : "Record Audio"}
+          <Input
+            className="flex-1"
+            containerClassName="min-h-[200px] flex-1"
+            placeholder="Enter your dream here"
+            value={content}
+            onChangeText={setContent}
+            multiline
+            textAlignVertical="top"
           />
-        </View>
 
-        {isRecording && (
-          <AudioVisualizer isRecording={isRecording} meterLevel={meterLevel} />
-        )}
+          {/* Image Preview Section */}
+          {images.length ? (
+            <ImagePreviewer handleRemove={removeImage} images={images} />
+          ) : null}
 
-        {audioUri && (
+          {/* Media Buttons */}
+          <View className="flex-row justify-between">
+            <Button
+              variant="secondary"
+              onPress={pickImage}
+              icon="images"
+              text={`Add Images (${images.length}/4)`}
+            />
+
+            <Button
+              variant={isRecording ? "destructive" : "secondary"}
+              onPress={isRecording ? stopRecording : startRecording}
+              icon={isRecording ? "stop" : "mic"}
+              text={isRecording ? "Stop Recording" : "Record Audio"}
+            />
+          </View>
+
+          {isRecording && (
+            <AudioVisualizer
+              isRecording={isRecording}
+              meterLevel={meterLevel}
+            />
+          )}
+
+          {audioUri && (
+            <Button
+              variant={"ghost"}
+              onPress={() => playSound(audioUri)}
+              icon={"play"}
+              text={"Play Recorded Audio"}
+              className="bg-slate-800"
+            />
+          )}
+
           <Button
-            variant={"ghost"}
-            onPress={() => playSound(audioUri)}
-            icon={"play"}
-            text={"Play Recorded Audio"}
-            className="mb-4 bg-slate-800"
+            text="Update Dream"
+            onPress={handleSubmit}
+            disabled={!content && !title}
           />
-        )}
-
-        <Button
-          text="Update Dream"
-          onPress={handleSubmit}
-          disabled={!content && !title}
-        />
-      </ScrollView>
+        </ScrollView>
+      </View>
     </KeyboardAvoidingView>
   );
 }

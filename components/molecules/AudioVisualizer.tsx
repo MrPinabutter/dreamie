@@ -19,7 +19,7 @@ export const AudioVisualizer: React.FC<AudioVisualizerProps> = ({
   const bars = useRef(
     Array.from({ length: NUM_BARS }, () => new Animated.Value(MIN_BAR_HEIGHT))
   ).current;
-  
+
   const lastMeterLevel = useRef(meterLevel);
   const animationFrameId = useRef<number | null>(null);
   const waveOffset = useRef(0);
@@ -34,32 +34,42 @@ export const AudioVisualizer: React.FC<AudioVisualizerProps> = ({
 
         bars.forEach((bar, index) => {
           const baseVariance = Math.random();
-          
+
           // Calculate wave influence
           const waveInfluence = Math.sin(
-            (index / NUM_BARS) * Math.PI * 2 * WAVE_FREQUENCY + waveOffset.current
+            (index / NUM_BARS) * Math.PI * 2 * WAVE_FREQUENCY +
+              waveOffset.current
           );
-          
+
           // Blend random and wave movement based on meter level
-          const blendedVariance = baseVariance * (1 - meterLevel) + 
+          const blendedVariance =
+            baseVariance * (1 - meterLevel) +
             (waveInfluence * 0.5 + 0.5) * meterLevel;
 
           // Scale to full MAX_BAR_HEIGHT range
-          const scaledHeight = MIN_BAR_HEIGHT + 
-            (blendedVariance * (MAX_BAR_HEIGHT - MIN_BAR_HEIGHT));
+          const scaledHeight =
+            MIN_BAR_HEIGHT +
+            blendedVariance * (MAX_BAR_HEIGHT - MIN_BAR_HEIGHT);
 
           // Apply meter level to determine final height
-          const targetHeight = MIN_BAR_HEIGHT + 
-            ((scaledHeight - MIN_BAR_HEIGHT) * Math.max(meterLevel - 0.3, 0) * 2);
+          const targetHeight =
+            MIN_BAR_HEIGHT +
+            (scaledHeight - MIN_BAR_HEIGHT) * Math.max(meterLevel - 0.3, 0) * 2;
 
           Animated.sequence([
             Animated.timing(bar, {
-              toValue: Math.min(MAX_BAR_HEIGHT, Math.max(MIN_BAR_HEIGHT, targetHeight)),
+              toValue: Math.min(
+                MAX_BAR_HEIGHT,
+                Math.max(MIN_BAR_HEIGHT, targetHeight)
+              ),
               duration: 100,
               useNativeDriver: false,
             }),
             Animated.timing(bar, {
-              toValue: Math.min(MAX_BAR_HEIGHT, Math.max(MIN_BAR_HEIGHT, targetHeight * 0.7)),
+              toValue: Math.min(
+                MAX_BAR_HEIGHT,
+                Math.max(MIN_BAR_HEIGHT, targetHeight * 0.7)
+              ),
               duration: 100,
               useNativeDriver: false,
             }),
@@ -97,7 +107,6 @@ export const AudioVisualizer: React.FC<AudioVisualizerProps> = ({
         alignItems: "center",
         justifyContent: "center",
         paddingHorizontal: 10,
-        marginVertical: 0,
       }}
     >
       {bars.map((bar, index) => (

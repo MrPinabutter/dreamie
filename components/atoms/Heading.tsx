@@ -11,7 +11,7 @@ export const Heading = ({ text, className, ...rest }: HeadingProps) => {
     <Text
       {...rest}
       className={cn(
-        "text-3xl mb-2 font-geist-black text-slate-950 dark:text-slate-50",
+        "text-3xl font-geist-black text-slate-950 dark:text-slate-50",
         className
       )}
     >

@@ -68,7 +68,7 @@ export default function App() {
       <Heading text="Create Dream" />
 
       <ScrollView
-        contentContainerClassName="flex-1 pb-4"
+        contentContainerClassName="flex-1 pb-4 gap-4 mt-2"
         keyboardShouldPersistTaps="handled"
       >
         <Input
@@ -79,7 +79,8 @@ export default function App() {
         />
 
         <Input
-          className="min-h-[200px] flex-1"
+          className="flex-1"
+          containerClassName="min-h-[200px] flex-1"
           placeholder="Enter your dream here"
           value={content}
           onChangeText={setContent}
@@ -88,10 +89,12 @@ export default function App() {
         />
 
         {/* Image Preview Section */}
-        <ImagePreviewer handleRemove={removeImage} images={images} />
+        {images.length ? (
+          <ImagePreviewer handleRemove={removeImage} images={images} />
+        ) : null}
 
         {/* Media Buttons */}
-        <View className="flex-row justify-between mb-4">
+        <View className="flex-row justify-between">
           <Button
             variant="secondary"
             onPress={pickImage}
@@ -117,7 +120,7 @@ export default function App() {
             onPress={() => playSound(audioUri)}
             icon={"play"}
             text={"Play Recorded Audio"}
-            className="mb-4 bg-slate-800"
+            className="bg-slate-800"
           />
         )}
 
