@@ -41,7 +41,8 @@ export default function App() {
     meterLevel,
     startRecording,
     stopRecording,
-    playSound,
+    toggleSound,
+    isPlaying,
     clearAudio,
   } = useAudioRecorder();
 
@@ -127,27 +128,29 @@ export default function App() {
             textAlignVertical="top"
           />
 
+          {/* Media Buttons */}
+          <View className="flex-row justify-end gap-2">
+            <Button
+              variant="ghost"
+              onPress={pickImage}
+              icon="images"
+              rounded
+              className="dark:bg-slate-900 bg-slate-50"
+            />
+
+            <Button
+              variant={isRecording ? "destructive" : "ghost"}
+              onPress={isRecording ? stopRecording : startRecording}
+              icon={isRecording ? "stop" : "mic"}
+              rounded
+              className="dark:bg-slate-900 bg-slate-50"
+            />
+          </View>
+
           {/* Image Preview Section */}
           {images.length ? (
             <ImagePreviewer handleRemove={removeImage} images={images} />
           ) : null}
-
-          {/* Media Buttons */}
-          <View className="flex-row justify-between">
-            <Button
-              variant="secondary"
-              onPress={pickImage}
-              icon="images"
-              text={`Add Images (${images.length}/4)`}
-            />
-
-            <Button
-              variant={isRecording ? "destructive" : "secondary"}
-              onPress={isRecording ? stopRecording : startRecording}
-              icon={isRecording ? "stop" : "mic"}
-              text={isRecording ? "Stop Recording" : "Record Audio"}
-            />
-          </View>
 
           {isRecording && (
             <AudioVisualizer
@@ -159,10 +162,10 @@ export default function App() {
           {audioUri && (
             <Button
               variant={"ghost"}
-              onPress={() => playSound(audioUri)}
-              icon={"play"}
-              text={"Play Recorded Audio"}
-              className="bg-slate-800"
+              onPress={() => toggleSound(audioUri)}
+              icon={isPlaying ? "stop" : "play"}
+              text={isPlaying ? "Stop Audio" : "Play Recorded Audio"}
+              className="dark:bg-slate-800 bg-slate-100"
             />
           )}
 

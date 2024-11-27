@@ -11,7 +11,7 @@ const buttonVariants = cva("rounded-lg items-center justify-center flex-row", {
       primary: "bg-violet-600 p-4",
       secondary: "bg-gray-200 p-3 dark:bg-emerald-500",
       outline: "border-2 border-violet-600 p-4 bg-transparent",
-      ghost: "bg-transparent hover:bg-violet-100 p-4",
+      ghost: "bg-transparent p-4",
       destructive: "bg-red-600 p-4",
       success: "bg-green-600 p-4",
       link: "bg-transparent p-4 underline",
@@ -26,6 +26,9 @@ const buttonVariants = cva("rounded-lg items-center justify-center flex-row", {
     },
     isFullWidth: {
       true: "w-full",
+    },
+    rounded: {
+      true: "rounded-full",
     },
   },
   compoundVariants: [
@@ -124,6 +127,7 @@ export const Button = ({
   size,
   disabled,
   isFullWidth,
+  rounded,
   className,
   ...rest
 }: ButtonProps) => {
@@ -138,6 +142,7 @@ export const Button = ({
           disabled,
           isFullWidth,
           className,
+          rounded,
         })
       )}
       activeOpacity={0.8}
@@ -147,7 +152,7 @@ export const Button = ({
           name={icon}
           size={getIconSize(size)}
           color={getIconColor(variant)}
-          className="mr-2"
+          className={cn({ "mr-2": !!text || !!children })}
         />
       ) : null}
       {text ? (

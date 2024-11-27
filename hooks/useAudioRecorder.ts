@@ -8,6 +8,7 @@ export function useAudioRecorder() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [meterLevel, setMeterLevel] = useState(0);
+  const [sound, setSound] = useState<Audio.Sound | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -80,6 +81,40 @@ export function useAudioRecorder() {
     }
   };
 
+  const toggleSound = async (uri: string) => {
+    try {
+      if (isPlaying) {
+        if (sound) {
+          await sound.stopAsync();
+          await sound.unloadAsync();
+          setSound(null);
+        }
+        setIsPlaying(false);
+      } else {
+        const { sound: newSound } = await Audio.Sound.createAsync({ uri });
+        setSound(newSound);
+        setIsPlaying(true);
+        await newSound.playAsync();
+
+        newSound.setOnPlaybackStatusUpdate(async (status) => {
+          if (
+            status.isLoaded &&
+            !status.isPlaying &&
+            status.positionMillis === status.durationMillis
+          ) {
+            setIsPlaying(false);
+            await newSound.unloadAsync();
+            setSound(null);
+          }
+        });
+      }
+    } catch (err) {
+      Alert.alert("Failed to toggle sound", err as string);
+      setIsPlaying(false);
+      setSound(null);
+    }
+  };
+
   const clearAudio = () => {
     setAudioUri(null);
   };
@@ -92,6 +127,7 @@ export function useAudioRecorder() {
     startRecording,
     stopRecording,
     playSound,
+    toggleSound,
     isPlaying,
     clearAudio,
   };

@@ -8,6 +8,7 @@ import {
   Modal,
   Dimensions,
   Pressable,
+  GestureResponderEvent,
 } from "react-native";
 import { Ionicons, Entypo } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -20,7 +21,7 @@ import { useColorScheme } from "nativewind";
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
 export const DreamListItem = ({ item: dream }: { item: Dream }) => {
-  const { playSound } = useAudioRecorder();
+  const { toggleSound, isPlaying } = useAudioRecorder();
   const { deleteDream } = useDreams();
   const [menuVisible, setMenuVisible] = useState(false);
   const [menuPosition, setMenuPosition] = useState({ top: 0, right: 0 });
@@ -36,7 +37,7 @@ export const DreamListItem = ({ item: dream }: { item: Dream }) => {
     deleteDream(dream.id);
   };
 
-  const handleMenuPress = (event: any) => {
+  const handleMenuPress = (event: GestureResponderEvent) => {
     const { pageY, pageX } = event.nativeEvent;
     setMenuPosition({
       top: pageY - 10,
@@ -78,11 +79,17 @@ export const DreamListItem = ({ item: dream }: { item: Dream }) => {
 
         {dream.audioUrl && (
           <TouchableOpacity
-            className="bg-gray-200 p-2 rounded-lg flex-row items-center justify-center mb-2"
-            onPress={() => playSound(dream.audioUrl!)}
+            className="bg-gray-200 p-2 rounded-lg flex-row items-center justify-center my-2"
+            onPress={() => toggleSound(dream.audioUrl!)}
+            activeOpacity={0.8}
           >
-            <Ionicons name="play" size={16} color="black" className="mr-2" />
-            <Text>Play Audio</Text>
+            <Ionicons
+              name={isPlaying ? "stop" : "play"}
+              size={16}
+              color="black"
+              className="mr-2"
+            />
+            <Text>{isPlaying ? "Stop Audio" : "Play Audio"}</Text>
           </TouchableOpacity>
         )}
 
