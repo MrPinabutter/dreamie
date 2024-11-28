@@ -5,7 +5,7 @@ import { Dream } from "@/db/schema";
 import { useDreams } from "@/hooks/useDreams";
 import { tailwindColors } from "@/utils";
 import { FontAwesome6 } from "@expo/vector-icons";
-import { format } from "date-fns";
+import { addMonths, format, startOfMonth } from "date-fns";
 import { StatusBar } from "expo-status-bar";
 import { useColorScheme } from "nativewind";
 import Animated, {
@@ -13,6 +13,7 @@ import Animated, {
   useAnimatedStyle,
   Easing,
   useSharedValue,
+  withSpring,
 } from "react-native-reanimated";
 import {
   RefreshControl,
@@ -20,36 +21,82 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Dimensions,
+  Pressable,
 } from "react-native";
 import { Input } from "@/components/atoms/Input";
-import { useState } from "react";
+import { useState, useCallback, useMemo } from "react";
+import CalendarPicker from "react-native-calendar-picker";
+import { Portal } from "@gorhom/portal";
+
+const SCREEN_HEIGHT = Dimensions.get("window").height;
+const MODAL_HEIGHT = SCREEN_HEIGHT * 0.5;
 
 export default function TabTwoScreen() {
   const [search, setSearch] = useState("");
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [isCalendarVisible, setIsCalendarVisible] = useState(false);
   const { dreams, setPage, loading, refreshDreams } = useDreams();
   const { colorScheme } = useColorScheme();
 
+  const markedDates = useMemo(() => {
+    const dates = [];
+    const today = new Date();
+
+    for (let i = 0; i < 12; i++) {
+      const date = startOfMonth(addMonths(today, i));
+      dates.push({
+        date,
+        style: {
+          backgroundColor:
+            tailwindColors.violet[colorScheme === "dark" ? 950 : 50],
+          borderRadius: 0,
+        },
+        textStyle: {
+          color: tailwindColors.violet[colorScheme === "dark" ? 400 : 600],
+        },
+      });
+    }
+    return dates;
+  }, []);
+
   const searchContainerHeight = useSharedValue(0);
+  const modalPosition = useSharedValue(MODAL_HEIGHT);
+
   const toggleSearch = () => {
     searchContainerHeight.value = searchContainerHeight.value === 0 ? 48 : 0;
   };
+
+  const toggleCalendar = useCallback(() => {
+    const isOpen = modalPosition.value === 0;
+    modalPosition.value = withSpring(isOpen ? MODAL_HEIGHT : 0, {
+      damping: 20,
+      stiffness: 90,
+    });
+    setIsCalendarVisible(!isOpen);
+  }, []);
 
   const config = {
     duration: 500,
     easing: Easing.bezier(0.5, 0.01, 0, 1),
   };
 
-  const style = useAnimatedStyle(() => {
+  const searchStyle = useAnimatedStyle(() => {
     return {
       height: withTiming(searchContainerHeight.value, config),
       opacity: withTiming(searchContainerHeight.value === 0 ? 0 : 1, config),
     };
   });
 
+  const modalStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateY: modalPosition.value }],
+    };
+  });
+
   const groupDreamsByMonth: Record<string, Dream[]> = dreams.reduce(
     (acc: Record<string, Dream[]>, item) => {
       const month = format(new Date(item.date), "MMMM");
-
       return {
         ...acc,
         [month]: [...(acc[month] || []), item],
@@ -61,7 +108,7 @@ export default function TabTwoScreen() {
   const icons = [
     {
       name: "calendar-check",
-      action: () => {},
+      action: toggleCalendar,
     },
     {
       name: "magnifying-glass",
@@ -71,79 +118,159 @@ export default function TabTwoScreen() {
     },
   ];
 
-  return (
-    <View className={"flex-1 bg-white dark:bg-slate-950 pt-12"}>
-      <StatusBar style="auto" />
+  const onDateChange = (date: Date) => {
+    setSelectedDate(date);
+    // Here you can add logic to filter dreams by date
+    toggleCalendar();
+  };
 
-      <View className="flex-row justify-between px-4">
-        <Heading text="Dreams" />
-        <View className="flex-row gap-6">
-          {icons.map((icon) => (
-            <TouchableOpacity
-              key={icon.name}
-              activeOpacity={0.8}
-              onPress={icon.action}
+  return (
+    <>
+      <View className="flex-1 bg-white dark:bg-slate-950 pt-12">
+        <StatusBar style="auto" />
+
+        <View className="flex-row justify-between px-4">
+          <Heading text="Dreams" />
+          <View className="flex-row gap-6">
+            {icons.map((icon) => (
+              <TouchableOpacity
+                key={icon.name}
+                activeOpacity={0.8}
+                onPress={icon.action}
+              >
+                <FontAwesome6
+                  name={icon.name}
+                  size={24}
+                  color={
+                    colorScheme === "dark"
+                      ? tailwindColors.white
+                      : tailwindColors.slate[950]
+                  }
+                />
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+
+        <Animated.View
+          className="mt-4 overflow-hidden px-4"
+          style={searchStyle}
+        >
+          <Input
+            icon={"closecircle"}
+            onPressIcon={() => {
+              toggleSearch();
+              if (search) {
+                setSearch("");
+                refreshDreams();
+              }
+            }}
+            value={search}
+            onChangeText={(text) => {
+              setSearch(text);
+              refreshDreams(text);
+            }}
+          />
+        </Animated.View>
+
+        <SectionList
+          sections={Object.entries(groupDreamsByMonth).map(([key, value]) => ({
+            title: key,
+            data: value,
+          }))}
+          className="px-4"
+          onEndReached={() => setPage((old) => old + 1)}
+          stickySectionHeadersEnabled={true}
+          onEndReachedThreshold={0.1}
+          refreshControl={
+            <RefreshControl
+              refreshing={loading}
+              onRefresh={refreshDreams}
+              colors={["#4285F4"]}
+              tintColor="#4285F4"
+            />
+          }
+          renderSectionHeader={({ section: { title } }) => (
+            <View className="flex-row items-center bg-white py-4 dark:bg-slate-950">
+              <Text className="font-faculty text-2xl mr-4 text-slate-800 dark:text-slate-200">
+                {title}
+              </Text>
+              <View className="flex-1 h-px bg-slate-500 dark:text-slate-200" />
+            </View>
+          )}
+          renderItem={DreamListItem}
+          ListFooterComponent={<Loader isLoading={loading} />}
+        />
+      </View>
+
+      {/* Calendar Modal in Portal */}
+      {isCalendarVisible && (
+        <Portal>
+          <Pressable
+            className="absolute inset-0 bg-black/50"
+            onPress={toggleCalendar}
+          >
+            <Animated.View
+              className="absolute bottom-0 left-0 right-0 bg-white pt-8 dark:bg-slate-900 rounded-t-3xl shadow-lg"
+              style={[modalStyle]}
             >
-              <FontAwesome6
-                name={icon.name}
-                size={24}
-                color={
+              <CalendarPicker
+                onDateChange={onDateChange}
+                selectedDayColor={tailwindColors.violet[500]}
+                selectedDayTextColor={
                   colorScheme === "dark"
                     ? tailwindColors.white
                     : tailwindColors.slate[950]
                 }
+                textStyle={{
+                  color:
+                    colorScheme === "dark"
+                      ? tailwindColors.white
+                      : tailwindColors.slate[950],
+                  fontFamily: "CreteRound",
+                }}
+                todayBackgroundColor={
+                  tailwindColors.slate[colorScheme === "dark" ? 800 : 200]
+                }
+                customDatesStyles={markedDates}
+                headerWrapperStyle={{
+                  backgroundColor: "transparent",
+                }}
+                dayLabelsWrapper={{
+                  borderTopWidth: 0,
+                  borderBottomWidth: 0,
+                  borderBottomColor:
+                    colorScheme === "dark"
+                      ? tailwindColors.slate[800]
+                      : tailwindColors.gray[200],
+                  paddingBottom: 10,
+                }}
+                monthYearHeaderWrapperStyle={{
+                  paddingTop: 0,
+                }}
+                weekdays={["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]}
               />
-            </TouchableOpacity>
-          ))}
-        </View>
-      </View>
 
-      <Animated.View className="mt-4 overflow-hidden px-4" style={style}>
-        <Input
-          icon={"closecircle"}
-          onPressIcon={() => {
-            toggleSearch();
-            if (search) {
-              setSearch("");
-              refreshDreams();
-            }
-          }}
-          value={search}
-          onChangeText={(text) => {
-            setSearch(text);
-            refreshDreams(text);
-          }}
-        />
-      </Animated.View>
-
-      <SectionList
-        sections={Object.entries(groupDreamsByMonth).map(([key, value]) => ({
-          title: key,
-          data: value,
-        }))}
-        className="px-4"
-        onEndReached={() => setPage((old) => old + 1)}
-        stickySectionHeadersEnabled={true}
-        onEndReachedThreshold={0.1}
-        refreshControl={
-          <RefreshControl
-            refreshing={loading}
-            onRefresh={refreshDreams}
-            colors={["#4285F4"]}
-            tintColor="#4285F4"
-          />
-        }
-        renderSectionHeader={({ section: { title } }) => (
-          <View className="flex-row items-center bg-white py-4 dark:bg-slate-950">
-            <Text className="font-faculty text-2xl mr-4 text-slate-800 dark:text-slate-200">
-              {title}
-            </Text>
-            <View className="flex-1 h-px bg-slate-500 dark:text-slate-200" />
-          </View>
-        )}
-        renderItem={DreamListItem}
-        ListFooterComponent={<Loader isLoading={loading} />}
-      />
-    </View>
+              <View className="flex-row justify-between items-center p-4 dark:border-gray-800 gap-4">
+                {[
+                  { title: "Close", function: toggleCalendar },
+                  { title: "Today", function: toggleCalendar },
+                ].map((it) => (
+                  <TouchableOpacity
+                    onPress={it.function}
+                    key={it.title}
+                    className="flex-1 rounded bg-slate-50 dark:bg-slate-800 py-4"
+                  >
+                    <Text className="font-geist-medium text-slate-950 dark:text-slate-100 text-center">
+                      {it.title}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </Animated.View>
+          </Pressable>
+        </Portal>
+      )}
+    </>
   );
 }

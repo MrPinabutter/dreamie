@@ -17,6 +17,7 @@ import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 import { useDreams } from "@/hooks/useDreams";
 import { tailwindColors } from "@/utils";
 import { useColorScheme } from "nativewind";
+import { cn } from "@/utils/cn";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
@@ -55,12 +56,16 @@ export const DreamListItem = ({ item: dream }: { item: Dream }) => {
         onPress={() => router.navigate(`../dream/${dream.id}`)}
       >
         {dream.title && (
-          <Text className="text-xl font-geist-bold dark:text-slate-50">
+          <Text className="text-xl font-geist-bold dark:text-slate-50 pr-4">
             {dream.title}
           </Text>
         )}
 
-        <Text className="text-base mb-2 font-crete dark:text-slate-300">
+        <Text
+          className={cn("text-base mb-2 font-crete dark:text-slate-300", {
+            "pr-4": !dream.title,
+          })}
+        >
           {dream.description.slice(0, 200)}
           {dream.description.length > 200 && "..."}
         </Text>
@@ -98,7 +103,7 @@ export const DreamListItem = ({ item: dream }: { item: Dream }) => {
         </Text>
 
         <TouchableOpacity
-          className="absolute rounded-full size-8 items-center justify-center top-2 right-2"
+          className="absolute rounded-full size-8 items-center justify-center top-1.5 right-1"
           onPress={handleMenuPress}
         >
           <Entypo

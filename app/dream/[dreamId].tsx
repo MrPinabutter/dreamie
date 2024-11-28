@@ -47,13 +47,8 @@ export default function App() {
   } = useAudioRecorder();
 
   const handleSubmit = async () => {
-    if (!title || !content) {
-      Alert.alert("Preencha os campos");
-      return;
-    }
-
-    if (!title.trim() || !content.trim()) {
-      Alert.alert("Error", "Please fill in both title and content");
+    if (!content.trim()) {
+      Alert.alert("Error", "Please fill content");
       return;
     }
 
