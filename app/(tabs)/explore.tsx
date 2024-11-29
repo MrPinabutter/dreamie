@@ -5,7 +5,7 @@ import { Dream } from "@/db/schema";
 import { useDreams } from "@/hooks/useDreams";
 import { tailwindColors } from "@/utils";
 import { FontAwesome6 } from "@expo/vector-icons";
-import { addMonths, format, startOfMonth } from "date-fns";
+import { format } from "date-fns";
 import { StatusBar } from "expo-status-bar";
 import { useColorScheme } from "nativewind";
 import Animated, {
@@ -15,6 +15,7 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import {
   RefreshControl,
   SectionList,
@@ -25,8 +26,11 @@ import {
   Pressable,
 } from "react-native";
 import { Input } from "@/components/atoms/Input";
-import { useState, useCallback, useMemo } from "react";
-import CalendarPicker from "react-native-calendar-picker";
+import { useState, useCallback, useEffect } from "react";
+import CalendarPicker, {
+  CustomDatesStylesFunc,
+  CustomDateStyle,
+} from "react-native-calendar-picker";
 import { Portal } from "@gorhom/portal";
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
@@ -34,31 +38,14 @@ const MODAL_HEIGHT = SCREEN_HEIGHT * 0.5;
 
 export default function TabTwoScreen() {
   const [search, setSearch] = useState("");
+  const [markedDates, setMarkedDates] = useState<
+    CustomDateStyle[] | CustomDatesStylesFunc | undefined
+  >([]);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isCalendarVisible, setIsCalendarVisible] = useState(false);
-  const { dreams, setPage, loading, refreshDreams } = useDreams();
+  const { dreams, setPage, loading, refreshDreams, getAllDreamsDates } =
+    useDreams();
   const { colorScheme } = useColorScheme();
-
-  const markedDates = useMemo(() => {
-    const dates = [];
-    const today = new Date();
-
-    for (let i = 0; i < 12; i++) {
-      const date = startOfMonth(addMonths(today, i));
-      dates.push({
-        date,
-        style: {
-          backgroundColor:
-            tailwindColors.violet[colorScheme === "dark" ? 950 : 50],
-          borderRadius: 0,
-        },
-        textStyle: {
-          color: tailwindColors.violet[colorScheme === "dark" ? 400 : 600],
-        },
-      });
-    }
-    return dates;
-  }, []);
 
   const searchContainerHeight = useSharedValue(0);
   const modalPosition = useSharedValue(MODAL_HEIGHT);
@@ -123,6 +110,28 @@ export default function TabTwoScreen() {
     // Here you can add logic to filter dreams by date
     toggleCalendar();
   };
+
+  useEffect(() => {
+    const loadDates = async () => {
+      const dates = await getAllDreamsDates();
+
+      const formattedDates = dates.map((it) => ({
+        date: new Date(it.date),
+        style: {
+          backgroundColor:
+            tailwindColors.violet[colorScheme === "dark" ? 950 : 50],
+          borderRadius: 0,
+        },
+        textStyle: {
+          color: tailwindColors.violet[colorScheme === "dark" ? 400 : 600],
+        },
+      }));
+
+      setMarkedDates(formattedDates);
+    };
+
+    loadDates();
+  }, [colorScheme, getAllDreamsDates]);
 
   return (
     <>
@@ -206,12 +215,10 @@ export default function TabTwoScreen() {
       {/* Calendar Modal in Portal */}
       {isCalendarVisible && (
         <Portal>
-          <Pressable
-            className="absolute inset-0 bg-black/50"
-            onPress={toggleCalendar}
-          >
+          <View className="absolute inset-0 bg-black/50">
+            <Pressable className="flex-1" onPress={toggleCalendar} />
             <Animated.View
-              className="absolute bottom-0 left-0 right-0 bg-white pt-8 dark:bg-slate-900 rounded-t-3xl shadow-lg"
+              className="absolute bottom-0 left-0 right-0 bg-white pt-4 dark:bg-slate-900 rounded-t-3xl shadow-lg"
               style={[modalStyle]}
             >
               <CalendarPicker
@@ -248,7 +255,30 @@ export default function TabTwoScreen() {
                 monthYearHeaderWrapperStyle={{
                   paddingTop: 0,
                 }}
-                weekdays={["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]}
+                monthTitleStyle={{
+                  fontSize: 24,
+                }}
+                yearTitleStyle={{
+                  fontSize: 24,
+                }}
+                previousComponent={
+                  <View className="bg-slate-50 py-4 px-6 dark:bg-slate-950/20 rounded-lg">
+                    <FontAwesome5
+                      name="angle-left"
+                      size={24}
+                      color={tailwindColors.violet[500]}
+                    />
+                  </View>
+                }
+                nextComponent={
+                  <View className="bg-slate-50 py-4 px-6 dark:bg-slate-950/20 rounded-lg">
+                    <FontAwesome5
+                      name="angle-right"
+                      size={24}
+                      color={tailwindColors.violet[500]}
+                    />
+                  </View>
+                }
               />
 
               <View className="flex-row justify-between items-center p-4 dark:border-gray-800 gap-4">
@@ -257,6 +287,7 @@ export default function TabTwoScreen() {
                   { title: "Today", function: toggleCalendar },
                 ].map((it) => (
                   <TouchableOpacity
+                    activeOpacity={0.9}
                     onPress={it.function}
                     key={it.title}
                     className="flex-1 rounded bg-slate-50 dark:bg-slate-800 py-4"
@@ -268,7 +299,7 @@ export default function TabTwoScreen() {
                 ))}
               </View>
             </Animated.View>
-          </Pressable>
+          </View>
         </Portal>
       )}
     </>

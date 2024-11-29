@@ -28,7 +28,11 @@ export function useDreams() {
   };
 
   const loadDream = async (id: string) => {
-    return await database.getDreamById(id);
+    return database.getDreamById(id);
+  };
+
+  const getAllDreamsDates = () => {
+    return database.getAllDreamsDates();
   };
 
   const loadMoreDreams = async () => {
@@ -137,6 +141,7 @@ export function useDreams() {
     error,
     addDream,
     updateDream,
+    getAllDreamsDates,
     deleteDream,
     loadDream,
     setPage,

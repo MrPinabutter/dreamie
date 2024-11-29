@@ -67,7 +67,15 @@ class DreamsDatabase {
       .all();
   }
 
-  async getDreamById(id: string) {
+  getAllDreamsDates = () => {
+    return this.db
+      .select({
+        date: schema.dreams.date,
+      })
+      .from(schema.dreams);
+  };
+
+  getDreamById(id: string) {
     const result = this.db
       .select()
       .from(schema.dreams)
