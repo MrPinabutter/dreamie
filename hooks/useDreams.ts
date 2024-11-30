@@ -10,13 +10,14 @@ export function useDreams() {
   const [page, setPage] = useState<number>(0);
   const pageSize = 20;
 
-  const loadDreams = async (search?: string) => {
+  const loadDreams = async (search?: string, date?: string) => {
     try {
       setLoading(true);
       const result = await database.getDreams({
         limit: pageSize,
         offset: 0,
         search,
+        date,
       });
       setDreams(result);
     } catch (err) {

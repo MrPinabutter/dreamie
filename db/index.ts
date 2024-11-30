@@ -2,7 +2,7 @@ import { drizzle } from "drizzle-orm/expo-sqlite";
 import * as SQLite from "expo-sqlite";
 
 import * as schema from "./schema";
-import { like, or, sql } from "drizzle-orm";
+import { and, like, or, sql } from "drizzle-orm";
 
 const DREAMS_DB = "dreams.db";
 
@@ -38,25 +38,38 @@ class DreamsDatabase {
     limit?: number;
     offset?: number;
     search?: string;
+    date?: string;
   }) {
     const {
       sortOrder = "desc",
       limit = 20,
       offset = 0,
       search,
+      date,
     } = options ?? {};
+
+    const conditions = [];
+
+    if (search) {
+      conditions.push(
+        or(
+          like(schema.dreams.title, `%${search}%`),
+          like(schema.dreams.description, `%${search}%`)
+        )
+      );
+    }
+
+    if (date) {
+      conditions.push(sql`date(${schema.dreams.date}) = date(${date})`);
+    }
+
+    const whereClause =
+      conditions.length > 0 ? sql`${and(...conditions)}` : undefined;
 
     return this.db
       .select()
       .from(schema.dreams)
-      .where(
-        search
-          ? or(
-              like(schema.dreams.title, `%${search}%`),
-              like(schema.dreams.description, `%${search}%`)
-            )
-          : undefined
-      )
+      .where(whereClause)
       .orderBy(
         sql`${schema.dreams.date} ${sql.raw(sortOrder)}, ${
           schema.dreams.createdAt

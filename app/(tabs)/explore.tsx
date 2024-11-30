@@ -41,7 +41,6 @@ export default function TabTwoScreen() {
   const [markedDates, setMarkedDates] = useState<
     CustomDateStyle[] | CustomDatesStylesFunc | undefined
   >([]);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isCalendarVisible, setIsCalendarVisible] = useState(false);
   const { dreams, setPage, loading, refreshDreams, getAllDreamsDates } =
     useDreams();
@@ -106,8 +105,7 @@ export default function TabTwoScreen() {
   ];
 
   const onDateChange = (date: Date) => {
-    setSelectedDate(date);
-    // Here you can add logic to filter dreams by date
+    refreshDreams(search, date.toISOString());
     toggleCalendar();
   };
 
