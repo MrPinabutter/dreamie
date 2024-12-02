@@ -15,7 +15,6 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
-import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import {
   RefreshControl,
   SectionList,
@@ -23,15 +22,14 @@ import {
   TouchableOpacity,
   View,
   Dimensions,
-  Pressable,
 } from "react-native";
 import { Input } from "@/components/atoms/Input";
 import { useState, useCallback, useEffect } from "react";
-import CalendarPicker, {
+import {
   CustomDatesStylesFunc,
   CustomDateStyle,
 } from "react-native-calendar-picker";
-import { Portal } from "@gorhom/portal";
+import { CalendarModal } from "@/components/organisms/CalendarModal";
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 const MODAL_HEIGHT = SCREEN_HEIGHT * 0.5;
@@ -60,7 +58,7 @@ export default function TabTwoScreen() {
       stiffness: 90,
     });
     setIsCalendarVisible(!isOpen);
-  }, []);
+  }, [modalPosition]);
 
   const config = {
     duration: 500,
@@ -71,12 +69,6 @@ export default function TabTwoScreen() {
     return {
       height: withTiming(searchContainerHeight.value, config),
       opacity: withTiming(searchContainerHeight.value === 0 ? 0 : 1, config),
-    };
-  });
-
-  const modalStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ translateY: modalPosition.value }],
     };
   });
 
@@ -103,11 +95,6 @@ export default function TabTwoScreen() {
       },
     },
   ];
-
-  const onDateChange = (date: Date) => {
-    refreshDreams(search, date.toISOString());
-    toggleCalendar();
-  };
 
   useEffect(() => {
     const loadDates = async () => {
@@ -211,95 +198,16 @@ export default function TabTwoScreen() {
       </View>
 
       {/* Calendar Modal in Portal */}
-      {isCalendarVisible && (
-        <Portal>
-          <View className="absolute inset-0 bg-black/50">
-            <Pressable className="flex-1" onPress={toggleCalendar} />
-            <Animated.View
-              className="absolute bottom-0 left-0 right-0 bg-white pt-4 dark:bg-slate-900 rounded-t-3xl shadow-lg"
-              style={[modalStyle]}
-            >
-              <CalendarPicker
-                onDateChange={onDateChange}
-                selectedDayColor={tailwindColors.violet[500]}
-                selectedDayTextColor={
-                  colorScheme === "dark"
-                    ? tailwindColors.white
-                    : tailwindColors.slate[950]
-                }
-                textStyle={{
-                  color:
-                    colorScheme === "dark"
-                      ? tailwindColors.white
-                      : tailwindColors.slate[950],
-                  fontFamily: "CreteRound",
-                }}
-                todayBackgroundColor={
-                  tailwindColors.slate[colorScheme === "dark" ? 800 : 200]
-                }
-                customDatesStyles={markedDates}
-                headerWrapperStyle={{
-                  backgroundColor: "transparent",
-                }}
-                dayLabelsWrapper={{
-                  borderTopWidth: 0,
-                  borderBottomWidth: 0,
-                  borderBottomColor:
-                    colorScheme === "dark"
-                      ? tailwindColors.slate[800]
-                      : tailwindColors.gray[200],
-                  paddingBottom: 10,
-                }}
-                monthYearHeaderWrapperStyle={{
-                  paddingTop: 0,
-                }}
-                monthTitleStyle={{
-                  fontSize: 24,
-                }}
-                yearTitleStyle={{
-                  fontSize: 24,
-                }}
-                previousComponent={
-                  <View className="bg-slate-50 py-4 px-6 dark:bg-slate-950/20 rounded-lg">
-                    <FontAwesome5
-                      name="angle-left"
-                      size={24}
-                      color={tailwindColors.violet[500]}
-                    />
-                  </View>
-                }
-                nextComponent={
-                  <View className="bg-slate-50 py-4 px-6 dark:bg-slate-950/20 rounded-lg">
-                    <FontAwesome5
-                      name="angle-right"
-                      size={24}
-                      color={tailwindColors.violet[500]}
-                    />
-                  </View>
-                }
-              />
-
-              <View className="flex-row justify-between items-center p-4 dark:border-gray-800 gap-4">
-                {[
-                  { title: "Close", function: toggleCalendar },
-                  { title: "Today", function: toggleCalendar },
-                ].map((it) => (
-                  <TouchableOpacity
-                    activeOpacity={0.9}
-                    onPress={it.function}
-                    key={it.title}
-                    className="flex-1 rounded bg-slate-50 dark:bg-slate-800 py-4"
-                  >
-                    <Text className="font-geist-medium text-slate-950 dark:text-slate-100 text-center">
-                      {it.title}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </Animated.View>
-          </View>
-        </Portal>
-      )}
+      <CalendarModal
+        isVisible={isCalendarVisible}
+        onClose={toggleCalendar}
+        onDateSelect={(date) => {
+          refreshDreams(search, date.toISOString());
+          toggleCalendar();
+        }}
+        markedDates={markedDates}
+        modalPosition={modalPosition}
+      />
     </>
   );
 }
