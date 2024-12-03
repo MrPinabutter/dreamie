@@ -11,21 +11,24 @@ import Animated, {
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { useColorScheme } from "nativewind";
 import { tailwindColors } from "@/utils";
+import { startOfToday } from "date-fns";
 
 interface CalendarModalProps {
   isVisible: boolean;
   onClose: () => void;
   onDateSelect: (date: Date) => void;
-  markedDates: CustomDateStyle[] | CustomDatesStylesFunc | undefined;
+  markedDates?: CustomDateStyle[] | CustomDatesStylesFunc;
   modalPosition: SharedValue<number>;
+  selectedDate?: Date;
 }
 
 export const CalendarModal = ({
   isVisible,
   onClose,
   onDateSelect,
-  markedDates,
+  markedDates = [],
   modalPosition,
+  selectedDate,
 }: CalendarModalProps) => {
   const { colorScheme } = useColorScheme();
 
@@ -34,6 +37,11 @@ export const CalendarModal = ({
   }));
 
   if (!isVisible) return null;
+
+  const handleSelectToday = () => {
+    onDateSelect(new Date());
+    onClose();
+  };
 
   return (
     <Portal>
@@ -44,6 +52,9 @@ export const CalendarModal = ({
           style={[modalStyle]}
         >
           <CalendarPicker
+            initialDate={selectedDate}
+            selectedStartDate={selectedDate}
+            maxDate={startOfToday()}
             onDateChange={(date) => onDateSelect(new Date(date))}
             selectedDayColor={tailwindColors.violet[500]}
             selectedDayTextColor={
@@ -57,6 +68,12 @@ export const CalendarModal = ({
                   ? tailwindColors.white
                   : tailwindColors.slate[950],
               fontFamily: "CreteRound",
+            }}
+            disabledDatesTextStyle={{
+              color:
+                colorScheme === "dark"
+                  ? tailwindColors.neutral[500]
+                  : tailwindColors.neutral[400],
             }}
             todayBackgroundColor={
               tailwindColors.slate[colorScheme === "dark" ? 800 : 200]
@@ -106,7 +123,7 @@ export const CalendarModal = ({
           <View className="flex-row justify-between items-center p-4 dark:border-gray-800 gap-4">
             {[
               { title: "Close", action: onClose },
-              { title: "Today", action: onClose },
+              { title: "Today", action: handleSelectToday },
             ].map((button) => (
               <TouchableOpacity
                 activeOpacity={0.9}

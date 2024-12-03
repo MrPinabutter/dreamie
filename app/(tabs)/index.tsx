@@ -2,6 +2,7 @@ import { Button } from "@/components/atoms/Button";
 import { Heading } from "@/components/atoms/Heading";
 import { Input } from "@/components/atoms/Input";
 import { AudioVisualizer } from "@/components/molecules/AudioVisualizer";
+import { DreamDatePicker } from "@/components/molecules/DatePicker";
 import { ImagePreviewer } from "@/components/molecules/ImagePreviewer";
 import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 import { useDreams } from "@/hooks/useDreams";
@@ -21,6 +22,7 @@ import "react-native-get-random-values";
 export default function App() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [dreamDate, setDreamDate] = useState(new Date());
 
   const { addDream } = useDreams();
   const { images, pickImage, removeImage, clearImages } = useImagePicker({
@@ -43,7 +45,7 @@ export default function App() {
         id: nanoid(),
         title: title.trim(),
         description: content.trim(),
-        date: new Date().toISOString(),
+        date: dreamDate.toISOString(),
         images: JSON.stringify(images),
         audioUrl: audioUri ?? undefined,
         mood: undefined,
@@ -66,7 +68,10 @@ export default function App() {
     >
       <StatusBar style="auto" />
 
-      <Heading text="Create Dream" />
+      <View className="flex-row justify-between items-center">
+        <Heading text="Create Dream" />
+        <DreamDatePicker date={dreamDate} onDateChange={setDreamDate} />
+      </View>
 
       <ScrollView
         contentContainerClassName="flex-1 pb-4 gap-4 mt-2"

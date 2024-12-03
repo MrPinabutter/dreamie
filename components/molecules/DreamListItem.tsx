@@ -18,6 +18,7 @@ import { useDreams } from "@/hooks/useDreams";
 import { tailwindColors } from "@/utils";
 import { useColorScheme } from "nativewind";
 import { cn } from "@/utils/cn";
+import { format } from "date-fns";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
@@ -55,20 +56,27 @@ export const DreamListItem = ({ item: dream }: { item: Dream }) => {
         activeOpacity={0.9}
         onPress={() => router.navigate(`../dream/${dream.id}`)}
       >
-        {dream.title && (
-          <Text className="text-xl font-geist-bold dark:text-slate-50 pr-4">
+        {!!dream.title && (
+          <Text
+            className={cn(
+              "text-xl font-geist-bold dark:text-slate-50 pr-4",
+              !dream.description && "mb-2"
+            )}
+          >
             {dream.title}
           </Text>
         )}
 
-        <Text
-          className={cn("text-base mb-2 font-crete dark:text-slate-300", {
-            "pr-4": !dream.title,
-          })}
-        >
-          {dream.description.slice(0, 200)}
-          {dream.description.length > 200 && "..."}
-        </Text>
+        {!!dream.description && (
+          <Text
+            className={cn("text-base mb-2 font-crete dark:text-slate-300", {
+              "pr-4": !dream.title,
+            })}
+          >
+            {dream.description.slice(0, 200)}
+            {dream.description.length > 200 && "..."}
+          </Text>
+        )}
 
         {JSON.parse(dream.images ?? "[]").length > 0 && (
           <ScrollView horizontal className="mb-2">
@@ -99,7 +107,7 @@ export const DreamListItem = ({ item: dream }: { item: Dream }) => {
         )}
 
         <Text className="text-gray-500 text-xs">
-          {new Date(dream.date).toLocaleString()}
+          {format(new Date(dream.date), "dd MMM yyyy")}
         </Text>
 
         <TouchableOpacity

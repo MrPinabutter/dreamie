@@ -2,6 +2,7 @@ import { Button } from "@/components/atoms/Button";
 import { Heading } from "@/components/atoms/Heading";
 import { Input } from "@/components/atoms/Input";
 import { AudioVisualizer } from "@/components/molecules/AudioVisualizer";
+import { DreamDatePicker } from "@/components/molecules/DatePicker";
 import { ImagePreviewer } from "@/components/molecules/ImagePreviewer";
 import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 import { useDreams } from "@/hooks/useDreams";
@@ -26,6 +27,7 @@ export default function App() {
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [dreamDate, setDreamDate] = useState(new Date());
 
   const { updateDream, loadDream } = useDreams();
   const { colorScheme } = useColorScheme();
@@ -56,7 +58,7 @@ export default function App() {
       await updateDream(dreamId as string, {
         title: title.trim(),
         description: content.trim(),
-        date: new Date().toISOString(),
+        date: dreamDate.toISOString(),
         images: JSON.stringify(images),
         audioUrl: audioUri ?? undefined,
         mood: undefined,
@@ -78,6 +80,7 @@ export default function App() {
       const data = await loadDream(dreamId as string);
       setTitle(data.title ?? "");
       setContent(data.description);
+      setDreamDate(new Date(data.date));
       setImages(JSON.parse(data.images ?? "[]"));
       setAudioUri(data.audioUrl);
     })();
@@ -103,7 +106,9 @@ export default function App() {
               size={24}
               color={tailwindColors.slate[colorScheme === "dark" ? 50 : 950]}
             />
-            <Heading text="Update Dream" />
+
+            <Heading text="Update Dream" className="mr-auto" />
+            <DreamDatePicker date={dreamDate} onDateChange={setDreamDate} />
           </View>
 
           <Input
