@@ -4,9 +4,11 @@ import { Input } from "@/components/atoms/Input";
 import { AudioVisualizer } from "@/components/molecules/AudioVisualizer";
 import { DreamDatePicker } from "@/components/molecules/DatePicker";
 import { ImagePreviewer } from "@/components/molecules/ImagePreviewer";
+import { CustomModal } from "@/components/molecules/Modal";
 import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 import { useDreams } from "@/hooks/useDreams";
 import { useImagePicker } from "@/hooks/useImagePicker";
+import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { nanoid } from "nanoid";
 import React, { useState } from "react";
@@ -23,6 +25,7 @@ export default function App() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [dreamDate, setDreamDate] = useState(new Date());
+  const [successModalOpen, setSuccessModalOpen] = useState(false);
 
   const { addDream } = useDreams();
   const { images, pickImage, removeImage, clearImages } = useImagePicker({
@@ -55,10 +58,14 @@ export default function App() {
       setContent("");
       clearImages();
       clearAudio();
-      Alert.alert("Success", "Your dream has been saved!");
+      setSuccessModalOpen(true);
     } catch {
       Alert.alert("Error", "Failed to save your dream");
     }
+  };
+
+  const closeSuccessModal = () => {
+    setSuccessModalOpen(false);
   };
 
   return (
@@ -138,6 +145,24 @@ export default function App() {
           disabled={!content && !title}
         />
       </ScrollView>
+
+      <CustomModal
+        isVisible={successModalOpen}
+        onClose={closeSuccessModal}
+        title="Sucesso!"
+        description="Seu sonho foi salvo com sucesso!"
+        icon="moon"
+      >
+        <Button
+          text="Fechar"
+          variant={"ghost"}
+          className="bg-slate-200/30 dark:bg-slate-700/20"
+          onPress={() => {
+            closeSuccessModal();
+            router.push("/(tabs)/explore");
+          }}
+        />
+      </CustomModal>
     </KeyboardAvoidingView>
   );
 }

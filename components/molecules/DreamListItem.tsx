@@ -19,6 +19,8 @@ import { tailwindColors } from "@/utils";
 import { useColorScheme } from "nativewind";
 import { cn } from "@/utils/cn";
 import { format } from "date-fns";
+import { CustomModal } from "./Modal";
+import { Button } from "../atoms/Button";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
@@ -26,6 +28,7 @@ export const DreamListItem = ({ item: dream }: { item: Dream }) => {
   const { toggleSound, isPlaying } = useAudioRecorder();
   const { deleteDream } = useDreams();
   const [menuVisible, setMenuVisible] = useState(false);
+  const [confirmModal, setConfirmModal] = useState(false);
   const [menuPosition, setMenuPosition] = useState({ top: 0, right: 0 });
   const { colorScheme } = useColorScheme();
 
@@ -36,7 +39,7 @@ export const DreamListItem = ({ item: dream }: { item: Dream }) => {
 
   const handleDelete = () => {
     setMenuVisible(false);
-    deleteDream(dream.id);
+    setConfirmModal(true);
   };
 
   const handleMenuPress = (event: GestureResponderEvent) => {
@@ -167,7 +170,9 @@ export const DreamListItem = ({ item: dream }: { item: Dream }) => {
                 color={tailwindColors.neutral[600]}
                 style={{ marginRight: 8 }}
               />
-              <Text className="text-sm text-gray-700">Edit</Text>
+              <Text className="text-sm text-gray-700 font-geist-semibold">
+                Edit
+              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -180,11 +185,41 @@ export const DreamListItem = ({ item: dream }: { item: Dream }) => {
                 color={tailwindColors.red[500]}
                 style={{ marginRight: 8 }}
               />
-              <Text className="text-sm text-red-500">Delete</Text>
+              <Text className="text-sm font-geist-semibold text-red-500">
+                Delete
+              </Text>
             </TouchableOpacity>
           </View>
         </Pressable>
       </Modal>
+
+      <CustomModal
+        isVisible={!!confirmModal}
+        onClose={() => setConfirmModal(false)}
+        title="Atenção"
+        description="Essa ação é irreversível, deseja mesmo continuar?"
+        icon="moon"
+      >
+        <View className="gap-2 flex-row justify-end w-full">
+          <Button
+            text="Voltar"
+            variant={"ghost"}
+            className="bg-slate-200/30 dark:bg-slate-700/20"
+            onPress={() => {
+              setConfirmModal(false);
+            }}
+          />
+
+          <Button
+            text="Deletar"
+            variant={"destructive"}
+            onPress={() => {
+              deleteDream(dream.id);
+              setConfirmModal(false);
+            }}
+          />
+        </View>
+      </CustomModal>
     </>
   );
 };

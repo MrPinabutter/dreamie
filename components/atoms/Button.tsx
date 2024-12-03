@@ -18,7 +18,7 @@ const buttonVariants = cva("rounded-lg items-center justify-center flex-row", {
     },
     size: {
       sm: "p-2 text-sm",
-      md: "p-4 text-base",
+      md: "p-4 py-3 text-base",
       lg: "p-6 text-lg",
     },
     disabled: {

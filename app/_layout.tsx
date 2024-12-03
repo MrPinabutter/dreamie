@@ -8,6 +8,7 @@ import "../global.css";
 import { database } from "@/db";
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 import { tailwindColors } from "@/utils";
+import { PortalProvider } from "@gorhom/portal";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -52,21 +53,23 @@ export default function RootLayout() {
   }
 
   return (
-    <Stack>
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen
-        name="dream/[dreamId]"
-        options={{
-          headerShown: false,
-          headerTintColor: tailwindColors.slate[50],
-          headerStyle: {
-            backgroundColor: tailwindColors.slate[950],
-          },
-          presentation: "transparentModal",
-          animation: "ios_from_right",
-        }}
-      />
-      <Stack.Screen name="+not-found" />
-    </Stack>
+    <PortalProvider>
+      <Stack>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="dream/[dreamId]"
+          options={{
+            headerShown: false,
+            headerTintColor: tailwindColors.slate[50],
+            headerStyle: {
+              backgroundColor: tailwindColors.slate[950],
+            },
+            presentation: "transparentModal",
+            animation: "ios_from_right",
+          }}
+        />
+        <Stack.Screen name="+not-found" />
+      </Stack>
+    </PortalProvider>
   );
 }
