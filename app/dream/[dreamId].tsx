@@ -4,6 +4,7 @@ import { Input } from "@/components/atoms/Input";
 import { AudioVisualizer } from "@/components/molecules/AudioVisualizer";
 import { DreamDatePicker } from "@/components/molecules/DatePicker";
 import { ImagePreviewer } from "@/components/molecules/ImagePreviewer";
+import { CustomModal } from "@/components/molecules/Modal";
 import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 import { useDreams } from "@/hooks/useDreams";
 import { useImagePicker } from "@/hooks/useImagePicker";
@@ -29,12 +30,18 @@ export default function App() {
   const [content, setContent] = useState("");
   const [dreamDate, setDreamDate] = useState(new Date());
 
+  const [successModalOpen, setSuccessModalOpen] = useState(false);
+
   const { updateDream, loadDream } = useDreams();
   const { colorScheme } = useColorScheme();
   const { images, pickImage, removeImage, clearImages, setImages } =
     useImagePicker({
       maxImages: 4,
     });
+
+  const closeSuccessModal = () => {
+    setSuccessModalOpen(false);
+  };
 
   const {
     audioUri,
@@ -68,7 +75,7 @@ export default function App() {
       setContent("");
       clearImages();
       clearAudio();
-      Alert.alert("Success", "Your dream has been updated!");
+      setSuccessModalOpen(true);
       router.back();
     } catch {
       Alert.alert("Error", "Failed to update your dream");
@@ -176,6 +183,24 @@ export default function App() {
           />
         </ScrollView>
       </View>
+
+      <CustomModal
+        isVisible={successModalOpen}
+        onClose={closeSuccessModal}
+        title="Sucesso!"
+        description="Seu sonho foi editado com sucesso!"
+        icon="moon"
+      >
+        <Button
+          text="Fechar"
+          variant={"ghost"}
+          className="bg-slate-200/30 dark:bg-slate-700/20"
+          onPress={() => {
+            closeSuccessModal();
+            router.push("/(tabs)/explore");
+          }}
+        />
+      </CustomModal>
     </KeyboardAvoidingView>
   );
 }
