@@ -108,7 +108,7 @@ export default function App() {
             onPress={pickImage}
             icon="images"
             rounded
-            className="dark:bg-slate-900 bg-slate-50"
+            className="dark:bg-slate-900 bg-slate-50 p-4"
           />
 
           <Button
@@ -116,7 +116,7 @@ export default function App() {
             onPress={isRecording ? stopRecording : startRecording}
             icon={isRecording ? "stop" : "mic"}
             rounded
-            className="dark:bg-slate-900 bg-slate-50"
+            className="dark:bg-slate-900 bg-slate-50 p-4"
           />
         </View>
 

@@ -1,4 +1,4 @@
-import { sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 import { sql } from "drizzle-orm";
 
 export const dreams = sqliteTable("dreams", {
@@ -6,7 +6,7 @@ export const dreams = sqliteTable("dreams", {
   title: text("title"),
   description: text("description").notNull(),
   date: text("date").notNull(),
-  mood: text("mood"),
+  mood: integer("mood").$type<0 | 1 | 2 | 3 | 4 | 5>(),
   images: text("images"),
   audioUrl: text("audio_url"),
   createdAt: text("created_at")

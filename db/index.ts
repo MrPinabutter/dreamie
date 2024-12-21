@@ -22,7 +22,7 @@ class DreamsDatabase {
         title TEXT NOT NULL,
         description TEXT NOT NULL,
         date TEXT NOT NULL,
-        mood TEXT,
+        mood INTEGER CHECK (mood >= 0 AND mood <= 5),
         tags TEXT,
         images TEXT,
         audio_url TEXT,
@@ -33,12 +33,14 @@ class DreamsDatabase {
 
     await this.sqlite.execAsync(query);
   }
+
   async getDreams(options?: {
     sortOrder?: "asc" | "desc";
     limit?: number;
     offset?: number;
     search?: string;
     date?: string;
+    moodRange?: { min: number; max: number };
   }) {
     const {
       sortOrder = "desc",
@@ -46,6 +48,7 @@ class DreamsDatabase {
       offset = 0,
       search,
       date,
+      moodRange,
     } = options ?? {};
 
     const conditions = [];
@@ -61,6 +64,12 @@ class DreamsDatabase {
 
     if (date) {
       conditions.push(sql`date(${schema.dreams.date}) = date(${date})`);
+    }
+
+    if (moodRange) {
+      conditions.push(
+        sql`${schema.dreams.mood} >= ${moodRange.min} AND ${schema.dreams.mood} <= ${moodRange.max}`
+      );
     }
 
     const whereClause =

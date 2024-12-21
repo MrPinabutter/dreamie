@@ -4,11 +4,15 @@ import { Tabs } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React from "react";
 
-const HomeIcon = ({ color, focused }: { focused: boolean; color: string }) => (
+const NewIcon = ({ color, focused }: { focused: boolean; color: string }) => (
   <TabBarIcon
     name={focused ? "newspaper" : "newspaper-outline"}
     color={color}
   />
+);
+
+const HomeIcon = ({ color, focused }: { focused: boolean; color: string }) => (
+  <TabBarIcon name={focused ? "home" : "home-outline"} color={color} />
 );
 
 const ExploreIcon = ({
@@ -46,10 +50,17 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="home"
         options={{
           title: "Home",
           tabBarIcon: HomeIcon,
+        }}
+      />
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: "New",
+          tabBarIcon: NewIcon,
         }}
       />
       <Tabs.Screen
