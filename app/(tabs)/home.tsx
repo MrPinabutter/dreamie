@@ -79,16 +79,17 @@ const HomePage = () => {
       <StatusBar style="auto" />
 
       <View className="flex-row items-center mb-2 gap-4">
-        <Text className="text-4xl font-geist-black text-violet-600 dark:text-violet-300">
+        <Text className="text-5xl h-10 text-center pt-2 font-shrikhand text-violet-600 dark:text-violet-500">
           Dreamie
         </Text>
       </View>
 
-      <View className="flex-row justify-between items-center mb-6">
+      <View className="flex-row justify-between items-center mb-4">
         <View>
-          <Text className="text-lg text-slate-600 dark:text-slate-400">
+          <Text className="text-lg font-geist-regular text-slate-600 dark:text-slate-400">
             Welcome back,
           </Text>
+
           <Heading text={userName} />
         </View>
         <View className="flex-row gap-2">
@@ -115,8 +116,10 @@ const HomePage = () => {
           <View className="p-4">
             <View className="flex-row justify-between items-center">
               <View>
-                <Text className="text-white text-lg">Current Streak</Text>
-                <Text className="text-white text-3xl font-bold">
+                <Text className="font-geist-regular text-slate-500 dark:text-slate-400 mb-1">
+                  Current Streak
+                </Text>
+                <Text className="text-white text-3xl font-geist-bold">
                   {streak} days
                 </Text>
               </View>
@@ -128,10 +131,10 @@ const HomePage = () => {
         <View className="flex-row gap-4">
           <Card className="flex-1 bg-slate-50 dark:bg-slate-900">
             <View className="p-4">
-              <Text className="text-sm text-slate-500 dark:text-slate-400">
+              <Text className="text-sm font-geist-regular text-slate-500 dark:text-slate-400">
                 This Week
               </Text>
-              <Text className="text-2xl font-bold text-slate-900 dark:text-white">
+              <Text className="text-2xl font-geist-bold text-slate-900 dark:text-white">
                 {lastWeekDreams.length} dreams
               </Text>
             </View>
@@ -139,11 +142,11 @@ const HomePage = () => {
 
           <Card className="flex-1 bg-slate-50 dark:bg-slate-900">
             <View className="p-4">
-              <Text className="text-sm text-slate-500 dark:text-slate-400">
+              <Text className="text-sm font-geist-regular text-slate-500 dark:text-slate-400">
                 Avg Mood
               </Text>
               <View className="flex-row items-center">
-                <Text className="text-xl font-bold text-slate-900 dark:text-white mr-2">
+                <Text className="text-xl font-geist-bold text-slate-900 dark:text-white mr-2">
                   {avgMood ? MOODS[avgMood].emoji : "N/A"}
                 </Text>
                 <Feather name="trending-up" size={16} color="#10b981" />
@@ -155,7 +158,7 @@ const HomePage = () => {
         {lastDream && (
           <Card className="bg-slate-50 dark:bg-slate-900">
             <View className="p-4 border-b border-slate-200 dark:border-slate-800">
-              <Text className="text-lg font-semibold text-slate-900 dark:text-white">
+              <Text className="text-lg font-geist-semibold text-slate-900 dark:text-white">
                 Latest Dream
               </Text>
             </View>
@@ -163,7 +166,7 @@ const HomePage = () => {
               className="p-4"
               onPress={() => router.push(`/dream/${lastDream.id}`)}
             >
-              <Text className="text-base text-slate-700 dark:text-slate-300 mb-2">
+              <Text className="text-base font-crete text-slate-700 dark:text-slate-300 mb-2">
                 {lastDream.title}
               </Text>
               <View className="flex-row items-center">
@@ -173,7 +176,7 @@ const HomePage = () => {
                   color="#94a3b8"
                   className="mr-2"
                 />
-                <Text className="text-sm text-slate-500 dark:text-slate-400">
+                <Text className="text-sm text-slate-500 font-geist-regular dark:text-slate-400">
                   {format(new Date(lastDream.date), "MMM d, yyyy")}
                 </Text>
               </View>

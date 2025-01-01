@@ -6,6 +6,9 @@ module.exports = {
     extend: {
       fontFamily: {
         crete: "CreteRound",
+        shrikhand: "Shrikhand",
+        climateCrisis: "ClimateCrisis",
+        fascinate: "Fascinate",
         "crete-italic": "CreteRoundItalic",
         faculty: "Faculty",
         "geist-black": "Geist-Black",
