@@ -14,6 +14,7 @@ import {
   startOfDay,
 } from "date-fns";
 import { MoodLevel, MOODS } from "@/constants/moods";
+import { Typography } from "@/components/atoms/Typography";
 
 interface CardProps extends ViewProps {
   children: React.ReactNode;
@@ -23,7 +24,7 @@ interface CardProps extends ViewProps {
 export const Card = ({ children, className = "", ...props }: CardProps) => {
   return (
     <View
-      className={`rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-sm overflow-hidden ${className}`}
+      className={`px-4 py-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-sm overflow-hidden ${className}`}
       {...props}
     >
       {children}
@@ -92,80 +93,50 @@ const HomePage = () => {
 
           <Heading text={userName} />
         </View>
-        <View className="flex-row gap-2">
-          {/* <Button
-            variant="ghost"
-            onPress={() => router.push('/calendar')}
-            icon="calendar"
-            rounded
-            className="dark:bg-slate-900 bg-slate-50"
-          />
-          <Button
-            variant="ghost"
-            onPress={() => router.push('/stats')}
-            icon="bar-chart-2"
-            rounded
-            className="dark:bg-slate-900 bg-slate-50"
-          /> */}
-        </View>
       </View>
 
       <ScrollView contentContainerClassName="flex-1 gap-4">
         {/* Streak Card */}
-        <Card className="bg-gradient-to-r from-violet-500 to-violet-600">
-          <View className="p-4">
-            <View className="flex-row justify-between items-center">
-              <View>
-                <Text className="font-geist-regular text-slate-500 dark:text-slate-400 mb-1">
-                  Current Streak
-                </Text>
-                <Text className="text-white text-3xl font-geist-bold">
-                  {streak} days
-                </Text>
-              </View>
-              <Feather name="moon" size={32} color="white" />
-            </View>
+        <Card className="flex-row justify-between items-center">
+          <View>
+            <Typography text="Current Streak" color={"gray"} />
+
+            <Typography text={`${streak} days`} size={"3xl"} weight={"bold"} />
           </View>
+
+          <Feather name="moon" size={32} color="white" />
         </Card>
 
         <View className="flex-row gap-4">
-          <Card className="flex-1 bg-slate-50 dark:bg-slate-900">
-            <View className="p-4">
-              <Text className="text-sm font-geist-regular text-slate-500 dark:text-slate-400">
-                This Week
-              </Text>
-              <Text className="text-2xl font-geist-bold text-slate-900 dark:text-white">
-                {lastWeekDreams.length} dreams
-              </Text>
-            </View>
+          <Card className="flex-1">
+            <Typography text="This Week" size={"sm"} color={"gray"} />
+
+            <Typography
+              text={`${lastWeekDreams.length} dreams`}
+              weight={"bold"}
+              size={"2xl"}
+            />
           </Card>
 
-          <Card className="flex-1 bg-slate-50 dark:bg-slate-900">
-            <View className="p-4">
-              <Text className="text-sm font-geist-regular text-slate-500 dark:text-slate-400">
-                Avg Mood
-              </Text>
-              <View className="flex-row items-center">
-                <Text className="text-xl font-geist-bold text-slate-900 dark:text-white mr-2">
-                  {avgMood ? MOODS[avgMood].emoji : "N/A"}
-                </Text>
-                <Feather name="trending-up" size={16} color="#10b981" />
-              </View>
+          <Card className="flex-1">
+            <Typography text="Avg Mood" size={"sm"} color={"gray"} />
+
+            <View className="flex-row gap-2 items-center">
+              <Typography
+                text={avgMood ? MOODS[avgMood].emoji : "N/A"}
+                weight={"bold"}
+                size={"2xl"}
+              />
+              <Feather name="trending-up" size={16} color="#10b981" />
             </View>
           </Card>
         </View>
 
         {lastDream && (
-          <Card className="bg-slate-50 dark:bg-slate-900">
-            <View className="p-4 border-b border-slate-200 dark:border-slate-800">
-              <Text className="text-lg font-geist-semibold text-slate-900 dark:text-white">
-                Latest Dream
-              </Text>
-            </View>
-            <Pressable
-              className="p-4"
-              onPress={() => router.push(`/dream/${lastDream.id}`)}
-            >
+          <Card className="gap-2">
+            <Typography text="Latest Dream" size="sm" color={"gray"} />
+
+            <Pressable onPress={() => router.push(`/dream/${lastDream.id}`)}>
               <Text className="text-base font-crete text-slate-700 dark:text-slate-300 mb-2">
                 {lastDream.title}
               </Text>
