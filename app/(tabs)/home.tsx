@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, ScrollView, Text, Pressable, ViewProps } from "react-native";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -15,6 +15,7 @@ import {
 } from "date-fns";
 import { MoodLevel, MOODS } from "@/constants/moods";
 import { Typography } from "@/components/atoms/Typography";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface CardProps extends ViewProps {
   children: React.ReactNode;
@@ -34,8 +35,16 @@ export const Card = ({ children, className = "", ...props }: CardProps) => {
 
 const HomePage = () => {
   const { dreams } = useDreams();
-  const userName = "Vitor";
+  const [userName, setUserName] = useState<string | null>();
 
+  useEffect(() => {
+    const getUserName = async () => {
+      const fetchedUserName = await AsyncStorage.getItem("username");
+      setUserName(fetchedUserName);
+    };
+
+    getUserName();
+  });
   const lastWeekDreams = dreams.filter((dream) => {
     const dreamDate = new Date(dream.date);
     const weekAgo = subDays(new Date(), 7);
@@ -47,7 +56,7 @@ const HomePage = () => {
   const dreamWithMood = dreams.filter((dream) => dream.mood !== null);
 
   const avgMood = Math.round(
-    dreamWithMood.reduce((acc, dream) => acc + Number(dream.mood || 0), 0) /
+    dreamWithMood.reduce((acc, dream) => acc + Number(dream.mood ?? 0), 0) /
       dreamWithMood.length || 0
   ) as MoodLevel;
 
@@ -91,7 +100,9 @@ const HomePage = () => {
             Welcome back,
           </Text>
 
-          <Heading text={userName} />
+          <Pressable onPress={() => router.replace("/username-setup")}>
+            <Heading text={userName as string} />
+          </Pressable>
         </View>
       </View>
 

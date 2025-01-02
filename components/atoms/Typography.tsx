@@ -1,9 +1,11 @@
 import { cn } from "@/utils/cn";
 import { cva, VariantProps } from "class-variance-authority";
+import { ReactNode } from "react";
 import { Text, TextProps } from "react-native";
 
 interface TypographyProps extends TextProps, VariantProps<typeof typoVariants> {
-  text: string;
+  text?: string | ReactNode;
+  children?: ReactNode;
   className?: string;
 }
 
@@ -49,7 +51,7 @@ export const Typography = ({ text, className, ...rest }: TypographyProps) => {
         className
       )}
     >
-      {text}
+      {text || rest.children}
     </Text>
   );
 };

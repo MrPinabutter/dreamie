@@ -1,14 +1,14 @@
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Stack, useRootNavigationState, useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
-
 import "../global.css";
 import { database } from "@/db";
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 import { tailwindColors } from "@/utils";
 import { PortalProvider } from "@gorhom/portal";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -30,6 +30,9 @@ export default function RootLayout() {
     "Geist-Thin": require("../assets/fonts/Geist-Thin.ttf"),
   });
 
+  const router = useRouter();
+  const navigationState = useRootNavigationState();
+
   useDrizzleStudio(database.sqlite);
 
   useEffect(() => {
@@ -47,9 +50,25 @@ export default function RootLayout() {
         console.error("Error initializing database:", error);
       }
     };
-
     initDb();
   }, []);
+
+  useEffect(() => {
+    const checkUsername = async () => {
+      if (!navigationState?.key) return;
+
+      try {
+        const username = await AsyncStorage.getItem("username");
+        if (!username) {
+          router.replace("/username-setup");
+        }
+      } catch (error) {
+        console.error("Error checking username:", error);
+      }
+    };
+
+    checkUsername();
+  }, [navigationState?.key, router]);
 
   if (!loaded) {
     return null;
@@ -58,6 +77,7 @@ export default function RootLayout() {
   return (
     <PortalProvider>
       <Stack>
+        <Stack.Screen name="username-setup" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen
           name="dream/[dreamId]"
