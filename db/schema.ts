@@ -8,6 +8,7 @@ export const dreams = sqliteTable("dreams", {
   date: text("date").notNull(),
   mood: integer("mood").$type<0 | 1 | 2 | 3 | 4 | 5>(),
   images: text("images"),
+  favorite: integer("favorite").$type<0 | 1>().default(0),
   audioUrl: text("audio_url"),
   createdAt: text("created_at")
     .notNull()

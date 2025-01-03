@@ -24,6 +24,7 @@ class DreamsDatabase {
         date TEXT NOT NULL,
         mood INTEGER CHECK (mood >= 0 AND mood <= 5),
         tags TEXT,
+        favorite INTEGER DEFAULT 0 CHECK (favorite = 0 OR favorite = 1),
         images TEXT,
         audio_url TEXT,
         created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -40,6 +41,7 @@ class DreamsDatabase {
     offset?: number;
     search?: string;
     date?: string;
+    favorite?: boolean;
     moodRange?: { min: number; max: number };
   }) {
     const {
@@ -47,6 +49,7 @@ class DreamsDatabase {
       limit = 20,
       offset = 0,
       search,
+      favorite,
       date,
       moodRange,
     } = options ?? {};
@@ -70,6 +73,10 @@ class DreamsDatabase {
       conditions.push(
         sql`${schema.dreams.mood} >= ${moodRange.min} AND ${schema.dreams.mood} <= ${moodRange.max}`
       );
+    }
+
+    if (favorite !== undefined) {
+      conditions.push(sql`${schema.dreams.favorite} = ${favorite ? 1 : 0}`);
     }
 
     const whereClause =
