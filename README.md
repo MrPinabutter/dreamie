@@ -1,56 +1,122 @@
-# Welcome to your Expo app 👋
+# Dreamie
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Welcome to **Dreamie**, an app designed to help users document their dreams and track statistics.
 
-## Get started
+---
 
-1. Install dependencies
+## Table of Contents
 
+- [Dreamie](#dreamie)
+  - [Table of Contents](#table-of-contents)
+  - [About the Project](#about-the-project)
+  - [Features](#features)
+  - [Installation](#installation)
+    - [Prerequisites](#prerequisites)
+    - [Steps](#steps)
+  - [Contributing](#contributing)
+  - [License](#license)
+  - [Contact](#contact)
+
+---
+
+## About the Project
+
+Dream Tracker is built for individuals who want to:
+
+- Record their dreams in a structured and easy-to-use format.
+- Analyze dream patterns over time with visual statistics.
+- Gain insights into their subconscious through dream journaling.
+
+---
+
+## Features
+
+- **Dream Journal**: Save and categorize your dreams.
+- **Statistics Dashboard**: View trends like most common dream themes, frequency, and emotional tone.
+- **Search & Filter**: Quickly find specific dreams by date, tags, or keywords.
+
+---
+
+## Installation
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (v14+ recommended)
+- [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
+- Database setup (MongoDB/PostgreSQL)
+
+### Steps
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/mrpinabutter/dreamie.git
+   ```
+
+2. Navigate to the project directory:
+
+   ```bash
+   cd dreamie
+   ```
+
+3. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+or
    ```bash
    yarn install
    ```
 
-2. Start the app
+5. Start the application:
 
    ```bash
-    yarn start
+   npm start
    ```
+or
+   ```bash
+   yarn start
+   ```
+---
 
-3. If react reanimated errors
+## Contributing
+
+Contributions are welcome! To contribute:
+
+1. Fork the repository.
+2. Create a feature branch:
 
    ```bash
-    yarn start --reset-cache
+   git checkout -b feature-name
    ```
 
-In the output, you'll find options to open the app in a
+3. Commit your changes:
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+   ```bash
+   git commit -m "Add feature-name"
+   ```
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+4. Push to your branch:
 
-## Get a fresh project
+   ```bash
+   git push origin feature-name
+   ```
 
-When you're ready, run:
+5. Open a pull request.
 
-```bash
-npm run reset-project
-```
+---
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## License
 
-## Learn more
+This project is licensed under the MIT License. See the `LICENSE` file for details.
 
-To learn more about developing your project with Expo, look at the following resources:
+---
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Contact
 
-## Join the community
+- **GitHub**: [mrpinabutter](https://github.com/mrpinabutter)
+- **Email**: vitorafael.r.c@gmail.com
 
-Join our community of developers creating universal apps.
+Feel free to reach out for support or collaboration opportunities!
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
