@@ -1,21 +1,24 @@
-import React, { useEffect, useState } from "react";
-import { View, ScrollView, Text, Pressable, ViewProps } from "react-native";
-import { router } from "expo-router";
-import { StatusBar } from "expo-status-bar";
 import { Button } from "@/components/atoms/Button";
 import { Heading } from "@/components/atoms/Heading";
-import { useDreams } from "@/hooks/useDreams";
-import { Feather } from "@expo/vector-icons";
-import {
-  isAfter,
-  subDays,
-  format,
-  differenceInHours,
-  startOfDay,
-} from "date-fns";
-import { MoodLevel, MOODS } from "@/constants/moods";
 import { Typography } from "@/components/atoms/Typography";
+import { MoodLevel, MOODS } from "@/constants/moods";
+import { useDreams } from "@/hooks/useDreams";
+import { tailwindColors } from "@/utils";
+import { cn } from "@/utils/cn";
+import { Feather } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  differenceInHours,
+  format,
+  isAfter,
+  startOfDay,
+  subDays,
+} from "date-fns";
+import { router } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import { useColorScheme } from "nativewind";
+import React, { useEffect, useState } from "react";
+import { Pressable, ScrollView, Text, View, ViewProps } from "react-native";
 
 interface CardProps extends ViewProps {
   children: React.ReactNode;
@@ -25,7 +28,10 @@ interface CardProps extends ViewProps {
 export const Card = ({ children, className = "", ...props }: CardProps) => {
   return (
     <View
-      className={`px-4 py-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-sm overflow-hidden ${className}`}
+      className={cn(
+        `px-5 py-4 rounded-lg bg-slate-100 dark:bg-slate-900 shadow-sm overflow-hidden`,
+        className
+      )}
       {...props}
     >
       {children}
@@ -84,6 +90,8 @@ const HomePage = () => {
     router.push(`/dream/${dreams[randomIndex].id}`);
   };
 
+  const { colorScheme } = useColorScheme();
+
   return (
     <View className="flex-1 bg-white dark:bg-slate-950 pt-12 px-4 relative">
       <StatusBar style="auto" />
@@ -106,7 +114,7 @@ const HomePage = () => {
         </View>
       </View>
 
-      <ScrollView contentContainerClassName="flex-1 gap-4">
+      <ScrollView contentContainerClassName="flex-1 gap-3">
         {/* Streak Card */}
         <Card className="flex-row justify-between items-center">
           <View>
@@ -115,10 +123,16 @@ const HomePage = () => {
             <Typography text={`${streak} days`} size={"3xl"} weight={"bold"} />
           </View>
 
-          <Feather name="moon" size={32} color="white" />
+          <Feather
+            name="moon"
+            size={32}
+            color={
+              colorScheme === "dark" ? "white" : tailwindColors.violet[500]
+            }
+          />
         </Card>
 
-        <View className="flex-row gap-4">
+        <View className="flex-row gap-3">
           <Card className="flex-1">
             <Typography text="This Week" size={"sm"} color={"gray"} />
 
