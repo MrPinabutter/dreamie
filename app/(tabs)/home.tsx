@@ -1,94 +1,27 @@
 import { Button } from "@/components/atoms/Button";
+import { Card } from "@/components/atoms/Card";
 import { Heading } from "@/components/atoms/Heading";
 import { Typography } from "@/components/atoms/Typography";
-import { MoodLevel, MOODS } from "@/constants/moods";
-import { useDreams } from "@/hooks/useDreams";
+import { MOODS } from "@/constants/moods";
+import { useHome } from "@/hooks/useHome";
 import { tailwindColors } from "@/utils";
-import { cn } from "@/utils/cn";
 import { Feather } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-  differenceInHours,
-  format,
-  isAfter,
-  startOfDay,
-  subDays,
-} from "date-fns";
+import { format } from "date-fns";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useColorScheme } from "nativewind";
-import React, { useEffect, useState } from "react";
-import { Pressable, ScrollView, Text, View, ViewProps } from "react-native";
-
-interface CardProps extends ViewProps {
-  children: React.ReactNode;
-  className?: string;
-}
-
-export const Card = ({ children, className = "", ...props }: CardProps) => {
-  return (
-    <View
-      className={cn(
-        `px-5 py-4 rounded-lg bg-slate-100 dark:bg-slate-900 shadow-sm overflow-hidden`,
-        className
-      )}
-      {...props}
-    >
-      {children}
-    </View>
-  );
-};
+import React from "react";
+import { Pressable, ScrollView, Text, View } from "react-native";
 
 const HomePage = () => {
-  const { dreams } = useDreams();
-  const [userName, setUserName] = useState<string | null>();
-
-  useEffect(() => {
-    const getUserName = async () => {
-      const fetchedUserName = await AsyncStorage.getItem("username");
-      setUserName(fetchedUserName);
-    };
-
-    getUserName();
-  });
-  const lastWeekDreams = dreams.filter((dream) => {
-    const dreamDate = new Date(dream.date);
-    const weekAgo = subDays(new Date(), 7);
-    return isAfter(dreamDate, weekAgo);
-  });
-
-  const lastDream = dreams[dreams.length - 1];
-
-  const dreamWithMood = dreams.filter((dream) => dream.mood !== null);
-
-  const avgMood = Math.round(
-    dreamWithMood.reduce((acc, dream) => acc + Number(dream.mood ?? 0), 0) /
-      dreamWithMood.length || 0
-  ) as MoodLevel;
-
-  const calculateStreak = () => {
-    let streak = 0;
-
-    let lastDreamDate = startOfDay(new Date(dreams[0]?.date));
-
-    for (const dream of dreams) {
-      if (differenceInHours(lastDreamDate, new Date(dream.date)) <= 24) {
-        streak++;
-        lastDreamDate = startOfDay(new Date(dream.date));
-      } else {
-        break;
-      }
-    }
-
-    return streak;
-  };
-
-  const streak = calculateStreak();
-
-  const handleRandomDream = () => {
-    const randomIndex = Math.floor(Math.random() * dreams.length);
-    router.push(`/dream/${dreams[randomIndex].id}`);
-  };
+  const {
+    userName,
+    lastWeekDreams,
+    lastDream,
+    avgMood,
+    streak,
+    handleRandomDream,
+  } = useHome();
 
   const { colorScheme } = useColorScheme();
 
