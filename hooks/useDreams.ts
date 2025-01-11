@@ -84,6 +84,20 @@ export function useDreams() {
     }
   };
 
+  const toggleFavoriteDream = async (id: string) => {
+    try {
+      const dream = database.getDreamById(id);
+      if (dream.favorite) {
+        await updateDream(id, { favorite: 0 });
+      } else {
+        await updateDream(id, { favorite: 1 });
+      }
+    } catch (err) {
+      setError(err as Error);
+      throw err;
+    }
+  };
+
   useEffect(() => {
     loadDreams();
   }, []);
@@ -142,6 +156,7 @@ export function useDreams() {
     error,
     addDream,
     updateDream,
+    toggleFavoriteDream,
     getAllDreamsDates,
     deleteDream,
     loadDream,

@@ -10,7 +10,7 @@ import {
   Pressable,
   GestureResponderEvent,
 } from "react-native";
-import { Ionicons, Entypo } from "@expo/vector-icons";
+import { Ionicons, Entypo, MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { Dream } from "@/db/schema";
 import { useAudioRecorder } from "@/hooks/useAudioRecorder";
@@ -26,7 +26,7 @@ const SCREEN_WIDTH = Dimensions.get("window").width;
 
 export const DreamListItem = ({ item: dream }: { item: Dream }) => {
   const { toggleSound, isPlaying } = useAudioRecorder();
-  const { deleteDream } = useDreams();
+  const { deleteDream, toggleFavoriteDream } = useDreams();
   const [menuVisible, setMenuVisible] = useState(false);
   const [confirmModal, setConfirmModal] = useState(false);
   const [menuPosition, setMenuPosition] = useState({ top: 0, right: 0 });
@@ -55,7 +55,7 @@ export const DreamListItem = ({ item: dream }: { item: Dream }) => {
     <>
       <TouchableOpacity
         key={dream.id}
-        className="bg-gray-50 p-4 rounded-lg mb-4 relative dark:bg-slate-800"
+        className="bg-gray-50 p-4 pb-3 rounded-lg mb-4 relative dark:bg-slate-900"
         activeOpacity={0.9}
         onPress={() => router.navigate(`../dream/${dream.id}`)}
       >
@@ -109,9 +109,26 @@ export const DreamListItem = ({ item: dream }: { item: Dream }) => {
           </TouchableOpacity>
         )}
 
-        <Text className="text-gray-500 text-xs">
-          {format(new Date(dream.date), "dd MMM yyyy")}
-        </Text>
+        <View className="w-full flex-row justify-between items-center">
+          <Text className="text-gray-500 text-xs">
+            {format(new Date(dream.date), "dd MMM yyyy")}
+          </Text>
+
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => toggleFavoriteDream(dream.id)}
+          >
+            <MaterialCommunityIcons
+              name={dream.favorite ? "heart" : "heart-broken"}
+              size={20}
+              color={
+                (dream.favorite ? tailwindColors.rose : tailwindColors.neutral)[
+                  colorScheme === "dark" ? 700 : 600
+                ]
+              }
+            />
+          </TouchableOpacity>
+        </View>
 
         <TouchableOpacity
           className="absolute rounded-full size-8 items-center justify-center top-1.5 right-1"
