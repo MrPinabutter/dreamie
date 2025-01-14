@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   TouchableOpacity,
   Text,
@@ -9,6 +9,7 @@ import {
   Dimensions,
   Pressable,
   GestureResponderEvent,
+  Animated,
 } from "react-native";
 import { Ionicons, Entypo, MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -32,6 +33,9 @@ export const DreamListItem = ({ item: dream }: { item: Dream }) => {
   const [menuPosition, setMenuPosition] = useState({ top: 0, right: 0 });
   const { colorScheme } = useColorScheme();
 
+  const jumpAnim = useRef(new Animated.Value(0)).current;
+  const rotateAnim = useRef(new Animated.Value(0)).current;
+
   const handleEdit = () => {
     setMenuVisible(false);
     router.navigate(`../dream/${dream.id}`);
@@ -50,6 +54,55 @@ export const DreamListItem = ({ item: dream }: { item: Dream }) => {
     });
     setMenuVisible(true);
   };
+
+  const handleToggleFavorite = () => {
+    jumpAnim.setValue(0);
+    rotateAnim.setValue(0);
+
+    Animated.parallel([
+      Animated.sequence([
+        Animated.timing(jumpAnim, {
+          toValue: -7,
+          duration: 150,
+          useNativeDriver: true,
+        }),
+        Animated.timing(jumpAnim, {
+          toValue: 0,
+          duration: 150,
+          useNativeDriver: true,
+        }),
+      ]),
+      Animated.sequence([
+        Animated.timing(rotateAnim, {
+          toValue: -10,
+          duration: 150,
+          useNativeDriver: true,
+        }),
+        Animated.timing(rotateAnim, {
+          toValue: 10,
+          duration: 150,
+          useNativeDriver: true,
+        }),
+        Animated.timing(rotateAnim, {
+          toValue: 0,
+          duration: 150,
+          useNativeDriver: true,
+        }),
+      ]),
+    ]).start();
+
+    toggleFavoriteDream(dream.id);
+  };
+
+  const spin = rotateAnim.interpolate({
+    inputRange: [0, 360],
+    outputRange: ["0deg", "360deg"],
+  });
+
+  const scale = jumpAnim.interpolate({
+    inputRange: [-7, 0],
+    outputRange: [1.2, 1],
+  });
 
   return (
     <>
@@ -114,19 +167,30 @@ export const DreamListItem = ({ item: dream }: { item: Dream }) => {
             {format(new Date(dream.date), "dd MMM yyyy")}
           </Text>
 
-          <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={() => toggleFavoriteDream(dream.id)}
-          >
-            <MaterialCommunityIcons
-              name={dream.favorite ? "heart" : "heart-broken"}
-              size={20}
-              color={
-                (dream.favorite ? tailwindColors.rose : tailwindColors.neutral)[
-                  colorScheme === "dark" ? 700 : 600
-                ]
-              }
-            />
+          <TouchableOpacity activeOpacity={0.8} onPress={handleToggleFavorite}>
+            <Animated.View
+              style={{
+                transform: [
+                  { translateY: jumpAnim },
+                  { rotate: spin },
+                  {
+                    scale,
+                  },
+                ],
+              }}
+            >
+              <MaterialCommunityIcons
+                name={dream.favorite ? "heart" : "heart-broken"}
+                size={20}
+                color={
+                  (dream.favorite
+                    ? tailwindColors.rose
+                    : tailwindColors.neutral)[
+                    colorScheme === "dark" ? 700 : 600
+                  ]
+                }
+              />
+            </Animated.View>
           </TouchableOpacity>
         </View>
 
