@@ -162,12 +162,16 @@ export const DreamListItem = ({ item: dream }: { item: Dream }) => {
           </TouchableOpacity>
         )}
 
-        <View className="w-full flex-row justify-between items-center">
+        <View className="w-full flex-row justify-between items-center py-1">
           <Text className="text-gray-500 text-xs">
             {format(new Date(dream.date), "dd MMM yyyy")}
           </Text>
 
-          <TouchableOpacity activeOpacity={0.8} onPress={handleToggleFavorite}>
+          <TouchableOpacity
+            className="absolute p-4 -mr-4 right-0"
+            activeOpacity={0.8}
+            onPress={handleToggleFavorite}
+          >
             <Animated.View
               style={{
                 transform: [
