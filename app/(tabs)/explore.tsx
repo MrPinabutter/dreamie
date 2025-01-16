@@ -1,11 +1,11 @@
-import React from "react";
+import React, { ComponentProps } from "react";
 import { Heading } from "@/components/atoms/Heading";
 import { Loader } from "@/components/atoms/Loader";
 import { DreamListItem } from "@/components/molecules/DreamListItem";
 import { Dream } from "@/db/schema";
 import { useDreams } from "@/hooks/useDreams";
 import { tailwindColors } from "@/utils";
-import { FontAwesome6 } from "@expo/vector-icons";
+import { Entypo } from "@expo/vector-icons";
 import { format } from "date-fns";
 import { StatusBar } from "expo-status-bar";
 import { useColorScheme } from "nativewind";
@@ -41,6 +41,7 @@ export default function TabTwoScreen() {
     CustomDateStyle[] | CustomDatesStylesFunc | undefined
   >([]);
   const [isCalendarVisible, setIsCalendarVisible] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
   const { dreams, setPage, loading, refreshDreams, getAllDreamsDates } =
     useDreams();
   const { colorScheme } = useColorScheme();
@@ -84,9 +85,18 @@ export default function TabTwoScreen() {
     {}
   );
 
+  const toggleFavorite = () => {
+    refreshDreams(search, undefined, isFavorite ? undefined : true);
+    setIsFavorite((old) => !old);
+  };
+
   const icons = [
     {
-      name: "calendar-check",
+      name: isFavorite ? "heart" : "heart-outlined",
+      action: toggleFavorite,
+    },
+    {
+      name: "calendar",
       action: toggleCalendar,
     },
     {
@@ -95,7 +105,7 @@ export default function TabTwoScreen() {
         toggleSearch();
       },
     },
-  ];
+  ] as { name: ComponentProps<typeof Entypo>["name"]; action: () => void }[];
 
   useEffect(() => {
     const loadDates = async () => {
@@ -133,7 +143,7 @@ export default function TabTwoScreen() {
                 activeOpacity={0.8}
                 onPress={icon.action}
               >
-                <FontAwesome6
+                <Entypo
                   name={icon.name}
                   size={24}
                   color={
@@ -163,7 +173,7 @@ export default function TabTwoScreen() {
             value={search}
             onChangeText={(text) => {
               setSearch(text);
-              refreshDreams(text);
+              refreshDreams(text, undefined, isFavorite ? undefined : true);
             }}
           />
         </Animated.View>
@@ -203,7 +213,11 @@ export default function TabTwoScreen() {
         isVisible={isCalendarVisible}
         onClose={toggleCalendar}
         onDateSelect={(date) => {
-          refreshDreams(search, date.toISOString());
+          refreshDreams(
+            search,
+            date.toISOString(),
+            isFavorite ? undefined : true
+          );
           toggleCalendar();
         }}
         markedDates={markedDates}
