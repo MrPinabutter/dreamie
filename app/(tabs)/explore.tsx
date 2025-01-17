@@ -1,5 +1,5 @@
-import React, { ComponentProps } from "react";
 import { Heading } from "@/components/atoms/Heading";
+import { Input } from "@/components/atoms/Input";
 import { Loader } from "@/components/atoms/Loader";
 import { DreamListItem } from "@/components/molecules/DreamListItem";
 import { Dream } from "@/db/schema";
@@ -9,37 +9,36 @@ import { Entypo } from "@expo/vector-icons";
 import { format } from "date-fns";
 import { StatusBar } from "expo-status-bar";
 import { useColorScheme } from "nativewind";
-import Animated, {
-  withTiming,
-  useAnimatedStyle,
-  Easing,
-  useSharedValue,
-  withSpring,
-} from "react-native-reanimated";
+import React, { ComponentProps, useCallback, useEffect, useState } from "react";
 import {
+  Dimensions,
   RefreshControl,
   SectionList,
   Text,
   TouchableOpacity,
   View,
-  Dimensions,
 } from "react-native";
-import { Input } from "@/components/atoms/Input";
-import { useState, useCallback, useEffect } from "react";
-import {
-  CustomDatesStylesFunc,
-  CustomDateStyle,
-} from "react-native-calendar-picker";
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
+
 import { CalendarModal } from "@/components/organisms/CalendarModal";
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 const MODAL_HEIGHT = SCREEN_HEIGHT * 0.5;
 
+const SPRING_CONFIG = {
+  damping: 20,
+  stiffness: 90,
+};
+
 export default function TabTwoScreen() {
   const [search, setSearch] = useState("");
-  const [markedDates, setMarkedDates] = useState<
-    CustomDateStyle[] | CustomDatesStylesFunc | undefined
-  >([]);
+  const [markedDates, setMarkedDates] = useState<string[]>([]);
   const [isCalendarVisible, setIsCalendarVisible] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const { dreams, setPage, loading, refreshDreams, getAllDreamsDates } =
@@ -53,14 +52,31 @@ export default function TabTwoScreen() {
     searchContainerHeight.value = searchContainerHeight.value === 0 ? 48 : 0;
   };
 
+  useEffect(() => {
+    return () => {
+      modalPosition.value = MODAL_HEIGHT;
+    };
+  }, []);
+
+  const showCalendar = useCallback(() => {
+    setIsCalendarVisible(true);
+    modalPosition.value = withSpring(0, SPRING_CONFIG);
+  }, []);
+
+  const hideCalendar = useCallback(() => {
+    modalPosition.value = withSpring(MODAL_HEIGHT, SPRING_CONFIG);
+    setTimeout(() => {
+      setIsCalendarVisible(false);
+    }, 300);
+  }, []);
+
   const toggleCalendar = useCallback(() => {
-    const isOpen = modalPosition.value === 0;
-    modalPosition.value = withSpring(isOpen ? MODAL_HEIGHT : 0, {
-      damping: 20,
-      stiffness: 90,
-    });
-    setIsCalendarVisible(!isOpen);
-  }, [modalPosition]);
+    if (isCalendarVisible) {
+      hideCalendar();
+    } else {
+      showCalendar();
+    }
+  }, [isCalendarVisible, hideCalendar, showCalendar]);
 
   const config = {
     duration: 500,
@@ -101,33 +117,30 @@ export default function TabTwoScreen() {
     },
     {
       name: "magnifying-glass",
-      action: () => {
-        toggleSearch();
-      },
+      action: toggleSearch,
     },
   ] as { name: ComponentProps<typeof Entypo>["name"]; action: () => void }[];
 
+  const loadDates = useCallback(async () => {
+    const dates = (await getAllDreamsDates()).map((it) => it.date);
+
+    setMarkedDates(dates);
+  }, [getAllDreamsDates]);
+
   useEffect(() => {
-    const loadDates = async () => {
-      const dates = await getAllDreamsDates();
-
-      const formattedDates = dates.map((it) => ({
-        date: new Date(it.date),
-        style: {
-          backgroundColor:
-            tailwindColors.violet[colorScheme === "dark" ? 950 : 50],
-          borderRadius: 0,
-        },
-        textStyle: {
-          color: tailwindColors.violet[colorScheme === "dark" ? 400 : 600],
-        },
-      }));
-
-      setMarkedDates(formattedDates);
-    };
-
     loadDates();
-  }, [colorScheme, getAllDreamsDates]);
+  }, []);
+
+  const markedDatesFormatted = markedDates.map((it) => ({
+    date: new Date(it),
+    style: {
+      backgroundColor: tailwindColors.violet[colorScheme === "dark" ? 950 : 50],
+      borderRadius: 0,
+    },
+    textStyle: {
+      color: tailwindColors.violet[colorScheme === "dark" ? 400 : 600],
+    },
+  }));
 
   return (
     <>
@@ -173,7 +186,7 @@ export default function TabTwoScreen() {
             value={search}
             onChangeText={(text) => {
               setSearch(text);
-              refreshDreams(text, undefined, isFavorite ? undefined : true);
+              refreshDreams(text, undefined, isFavorite ? true : undefined);
             }}
           />
         </Animated.View>
@@ -216,11 +229,11 @@ export default function TabTwoScreen() {
           refreshDreams(
             search,
             date.toISOString(),
-            isFavorite ? undefined : true
+            isFavorite ? true : undefined
           );
           toggleCalendar();
         }}
-        markedDates={markedDates}
+        markedDates={markedDatesFormatted}
         modalPosition={modalPosition}
       />
     </>

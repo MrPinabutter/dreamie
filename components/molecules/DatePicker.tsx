@@ -1,12 +1,17 @@
 import { Button } from "@/components/atoms/Button";
 import { format } from "date-fns";
-import { useCallback, useState } from "react";
-import { useSharedValue, withSpring } from "react-native-reanimated";
+import React, { useCallback, useEffect, useState } from "react";
 import { Dimensions } from "react-native";
+import { useSharedValue, withSpring } from "react-native-reanimated";
 import { CalendarModal } from "../organisms/CalendarModal";
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 const MODAL_HEIGHT = SCREEN_HEIGHT * 0.5;
+
+const SPRING_CONFIG = {
+  damping: 20,
+  stiffness: 90,
+};
 
 interface DreamDatePickerProps {
   date: Date;
@@ -20,14 +25,31 @@ export const DreamDatePicker = ({
   const [isCalendarVisible, setIsCalendarVisible] = useState(false);
   const modalPosition = useSharedValue(MODAL_HEIGHT);
 
+  useEffect(() => {
+    return () => {
+      modalPosition.value = MODAL_HEIGHT;
+    };
+  }, []);
+
+  const showCalendar = useCallback(() => {
+    setIsCalendarVisible(true);
+    modalPosition.value = withSpring(0, SPRING_CONFIG);
+  }, []);
+
+  const hideCalendar = useCallback(() => {
+    modalPosition.value = withSpring(MODAL_HEIGHT, SPRING_CONFIG);
+    setTimeout(() => {
+      setIsCalendarVisible(false);
+    }, 300);
+  }, []);
+
   const toggleCalendar = useCallback(() => {
-    const isOpen = modalPosition.value === 0;
-    modalPosition.value = withSpring(isOpen ? MODAL_HEIGHT : 0, {
-      damping: 20,
-      stiffness: 90,
-    });
-    setIsCalendarVisible(!isOpen);
-  }, [modalPosition]);
+    if (isCalendarVisible) {
+      hideCalendar();
+    } else {
+      showCalendar();
+    }
+  }, [isCalendarVisible, hideCalendar, showCalendar]);
 
   const handleDateSelect = (selectedDate: Date) => {
     onDateChange(selectedDate);

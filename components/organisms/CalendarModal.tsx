@@ -7,6 +7,7 @@ import CalendarPicker, {
 import Animated, {
   SharedValue,
   useAnimatedStyle,
+  withSpring,
 } from "react-native-reanimated";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { useColorScheme } from "nativewind";
@@ -33,7 +34,14 @@ export const CalendarModal = ({
   const { colorScheme } = useColorScheme();
 
   const modalStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: modalPosition.value }],
+    transform: [
+      {
+        translateY: withSpring(modalPosition.value, {
+          damping: 20,
+          stiffness: 90,
+        }),
+      },
+    ],
   }));
 
   if (!isVisible) return null;
@@ -49,7 +57,7 @@ export const CalendarModal = ({
         <Pressable className="flex-1" onPress={onClose} />
         <Animated.View
           className="absolute bottom-0 left-0 right-0 bg-white pt-4 dark:bg-slate-900 rounded-t-3xl shadow-lg"
-          style={[modalStyle]}
+          style={modalStyle}
         >
           <CalendarPicker
             initialDate={selectedDate}

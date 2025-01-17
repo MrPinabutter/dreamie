@@ -48,6 +48,7 @@ export default function TabLayout() {
           elevation: 0,
         },
       }}
+      initialRouteName="explore"
     >
       <Tabs.Screen
         name="home"
