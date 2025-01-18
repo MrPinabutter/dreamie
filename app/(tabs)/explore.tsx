@@ -30,6 +30,7 @@ import { CalendarModal } from "@/components/organisms/CalendarModal";
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 const MODAL_HEIGHT = SCREEN_HEIGHT * 0.5;
+const SEARCH_HEIGHT = 52;
 
 const SPRING_CONFIG = {
   damping: 20,
@@ -45,11 +46,14 @@ export default function TabTwoScreen() {
     useDreams();
   const { colorScheme } = useColorScheme();
 
-  const searchContainerHeight = useSharedValue(0);
+  const searchAnimation = useSharedValue(0);
   const modalPosition = useSharedValue(MODAL_HEIGHT);
 
   const toggleSearch = () => {
-    searchContainerHeight.value = searchContainerHeight.value === 0 ? 48 : 0;
+    searchAnimation.value = withTiming(searchAnimation.value === 0 ? 1 : 0, {
+      duration: 300,
+      easing: Easing.inOut(Easing.ease),
+    });
   };
 
   useEffect(() => {
@@ -78,15 +82,25 @@ export default function TabTwoScreen() {
     }
   }, [isCalendarVisible, hideCalendar, showCalendar]);
 
-  const config = {
-    duration: 500,
-    easing: Easing.bezier(0.5, 0.01, 0, 1),
-  };
-
-  const searchStyle = useAnimatedStyle(() => {
+  const searchContainerStyle = useAnimatedStyle(() => {
     return {
-      height: withTiming(searchContainerHeight.value, config),
-      opacity: withTiming(searchContainerHeight.value === 0 ? 0 : 1, config),
+      opacity: searchAnimation.value,
+      display: searchAnimation.value === 0 ? "none" : "flex",
+      transform: [
+        {
+          translateY: (1 - searchAnimation.value) * -SEARCH_HEIGHT,
+        },
+      ],
+    };
+  });
+
+  const listContainerStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          translateY: searchAnimation.value * SEARCH_HEIGHT,
+        },
+      ],
     };
   });
 
@@ -123,7 +137,6 @@ export default function TabTwoScreen() {
 
   const loadDates = useCallback(async () => {
     const dates = (await getAllDreamsDates()).map((it) => it.date);
-
     setMarkedDates(dates);
   }, [getAllDreamsDates]);
 
@@ -170,58 +183,63 @@ export default function TabTwoScreen() {
           </View>
         </View>
 
-        <Animated.View
-          className="mt-4 overflow-hidden px-4"
-          style={searchStyle}
-        >
-          <Input
-            icon={"closecircle"}
-            onPressIcon={() => {
-              toggleSearch();
-              if (search) {
-                setSearch("");
-                refreshDreams();
-              }
-            }}
-            value={search}
-            onChangeText={(text) => {
-              setSearch(text);
-              refreshDreams(text, undefined, isFavorite ? true : undefined);
-            }}
+        <View className="relative h-2">
+          <Animated.View
+            className="overflow-hidden px-4 absolute top-4 left-0 right-0"
+            style={searchContainerStyle}
+          >
+            <Input
+              icon={"closecircle"}
+              onPressIcon={() => {
+                toggleSearch();
+                if (search) {
+                  setSearch("");
+                  refreshDreams();
+                }
+              }}
+              value={search}
+              onChangeText={(text) => {
+                setSearch(text);
+                refreshDreams(text, undefined, isFavorite ? true : undefined);
+              }}
+            />
+          </Animated.View>
+        </View>
+
+        <Animated.View style={[{ flex: 1 }, listContainerStyle]}>
+          <SectionList
+            sections={Object.entries(groupDreamsByMonth).map(
+              ([key, value]) => ({
+                title: key,
+                data: value,
+              })
+            )}
+            className="px-4"
+            onEndReached={() => setPage((old) => old + 1)}
+            stickySectionHeadersEnabled={true}
+            onEndReachedThreshold={0.1}
+            refreshControl={
+              <RefreshControl
+                refreshing={loading}
+                onRefresh={refreshDreams}
+                colors={["#4285F4"]}
+                tintColor="#4285F4"
+              />
+            }
+            renderSectionHeader={({ section: { title } }) => (
+              <View className="flex-row items-center bg-white py-4 dark:bg-slate-950">
+                <Text className="font-faculty text-2xl mr-4 text-slate-800 dark:text-slate-200">
+                  {title}
+                </Text>
+                <View className="flex-1 h-px bg-slate-500 dark:text-slate-200" />
+              </View>
+            )}
+            renderItem={DreamListItem}
+            ListFooterComponent={<Loader isLoading={loading} />}
           />
         </Animated.View>
-
-        <SectionList
-          sections={Object.entries(groupDreamsByMonth).map(([key, value]) => ({
-            title: key,
-            data: value,
-          }))}
-          className="px-4"
-          onEndReached={() => setPage((old) => old + 1)}
-          stickySectionHeadersEnabled={true}
-          onEndReachedThreshold={0.1}
-          refreshControl={
-            <RefreshControl
-              refreshing={loading}
-              onRefresh={refreshDreams}
-              colors={["#4285F4"]}
-              tintColor="#4285F4"
-            />
-          }
-          renderSectionHeader={({ section: { title } }) => (
-            <View className="flex-row items-center bg-white py-4 dark:bg-slate-950">
-              <Text className="font-faculty text-2xl mr-4 text-slate-800 dark:text-slate-200">
-                {title}
-              </Text>
-              <View className="flex-1 h-px bg-slate-500 dark:text-slate-200" />
-            </View>
-          )}
-          renderItem={DreamListItem}
-          ListFooterComponent={<Loader isLoading={loading} />}
-        />
       </View>
 
-      {/* Calendar Modal in Portal */}
       <CalendarModal
         isVisible={isCalendarVisible}
         onClose={toggleCalendar}
