@@ -9,8 +9,8 @@ const SCREEN_HEIGHT = Dimensions.get("window").height;
 const MODAL_HEIGHT = SCREEN_HEIGHT * 0.5;
 
 const SPRING_CONFIG = {
-  damping: 20,
-  stiffness: 90,
+  damping: 22,
+  stiffness: 180,
 };
 
 interface DreamDatePickerProps {

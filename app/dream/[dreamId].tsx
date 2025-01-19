@@ -14,13 +14,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useColorScheme } from "nativewind";
 import React, { useEffect, useState } from "react";
-import {
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  View,
-} from "react-native";
+import { Alert, ScrollView, View } from "react-native";
 import "react-native-get-random-values";
 
 export default function App() {
@@ -95,11 +89,9 @@ export default function App() {
   }, []);
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      className="flex-1 bg-white dark:bg-slate-950 px-4 pt-12"
-    >
+    <View className="flex-1 bg-white dark:bg-slate-950 px-4 pt-12">
       <StatusBar style="auto" />
+      <DreamDatePicker date={dreamDate} onDateChange={setDreamDate} />
 
       <View className="h-full">
         <ScrollView
@@ -115,7 +107,6 @@ export default function App() {
             />
 
             <Heading text="Update Dream" className="mr-auto" />
-            <DreamDatePicker date={dreamDate} onDateChange={setDreamDate} />
           </View>
 
           <Input
@@ -201,6 +192,6 @@ export default function App() {
           }}
         />
       </CustomModal>
-    </KeyboardAvoidingView>
+    </View>
   );
 }

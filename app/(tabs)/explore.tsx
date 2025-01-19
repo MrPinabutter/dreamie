@@ -33,8 +33,8 @@ const MODAL_HEIGHT = SCREEN_HEIGHT * 0.5;
 const SEARCH_HEIGHT = 52;
 
 const SPRING_CONFIG = {
-  damping: 20,
-  stiffness: 90,
+  damping: 22,
+  stiffness: 180,
 };
 
 export default function TabTwoScreen() {
@@ -155,6 +155,11 @@ export default function TabTwoScreen() {
     },
   }));
 
+  const onDateSelect = (date: Date) => {
+    refreshDreams(search, date.toISOString(), isFavorite ? true : undefined);
+    toggleCalendar();
+  };
+
   return (
     <>
       <View className="flex-1 bg-white dark:bg-slate-950 pt-12">
@@ -243,14 +248,7 @@ export default function TabTwoScreen() {
       <CalendarModal
         isVisible={isCalendarVisible}
         onClose={toggleCalendar}
-        onDateSelect={(date) => {
-          refreshDreams(
-            search,
-            date.toISOString(),
-            isFavorite ? true : undefined
-          );
-          toggleCalendar();
-        }}
+        onDateSelect={onDateSelect}
         markedDates={markedDatesFormatted}
         modalPosition={modalPosition}
       />

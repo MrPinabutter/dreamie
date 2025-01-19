@@ -7,9 +7,7 @@ import CalendarPicker, {
 import Animated, {
   SharedValue,
   useAnimatedStyle,
-  withSpring,
 } from "react-native-reanimated";
-import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { useColorScheme } from "nativewind";
 import { tailwindColors } from "@/utils";
 import { startOfToday } from "date-fns";
@@ -36,10 +34,7 @@ export const CalendarModal = ({
   const modalStyle = useAnimatedStyle(() => ({
     transform: [
       {
-        translateY: withSpring(modalPosition.value, {
-          damping: 20,
-          stiffness: 90,
-        }),
+        translateY: modalPosition.value,
       },
     ],
   }));
@@ -87,45 +82,6 @@ export const CalendarModal = ({
               tailwindColors.slate[colorScheme === "dark" ? 800 : 200]
             }
             customDatesStyles={markedDates}
-            headerWrapperStyle={{
-              backgroundColor: "transparent",
-            }}
-            dayLabelsWrapper={{
-              borderTopWidth: 0,
-              borderBottomWidth: 0,
-              borderBottomColor:
-                colorScheme === "dark"
-                  ? tailwindColors.slate[800]
-                  : tailwindColors.gray[200],
-              paddingBottom: 10,
-            }}
-            monthYearHeaderWrapperStyle={{
-              paddingTop: 0,
-            }}
-            monthTitleStyle={{
-              fontSize: 24,
-            }}
-            yearTitleStyle={{
-              fontSize: 24,
-            }}
-            previousComponent={
-              <View className="bg-slate-50 py-4 px-6 dark:bg-slate-950/20 rounded-lg">
-                <FontAwesome5
-                  name="angle-left"
-                  size={24}
-                  color={tailwindColors.violet[500]}
-                />
-              </View>
-            }
-            nextComponent={
-              <View className="bg-slate-50 py-4 px-6 dark:bg-slate-950/20 rounded-lg">
-                <FontAwesome5
-                  name="angle-right"
-                  size={24}
-                  color={tailwindColors.violet[500]}
-                />
-              </View>
-            }
           />
 
           <View className="flex-row justify-between items-center p-4 dark:border-gray-800 gap-4">
