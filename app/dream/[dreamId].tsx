@@ -91,7 +91,6 @@ export default function App() {
   return (
     <View className="flex-1 bg-white dark:bg-slate-950 px-4 pt-12">
       <StatusBar style="auto" />
-      <DreamDatePicker date={dreamDate} onDateChange={setDreamDate} />
 
       <View className="h-full">
         <ScrollView
@@ -107,6 +106,8 @@ export default function App() {
             />
 
             <Heading text="Update Dream" className="mr-auto" />
+
+            <DreamDatePicker date={dreamDate} onDateChange={setDreamDate} />
           </View>
 
           <Input
