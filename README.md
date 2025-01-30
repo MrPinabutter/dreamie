@@ -69,7 +69,7 @@ or
    yarn install
    ```
 
-5. Start the application:
+1. Start the application:
 
    ```bash
    npm start
@@ -77,6 +77,10 @@ or
 or
    ```bash
    yarn start
+   ```
+or (you may need to reset cache when upload packages)
+   ```bash
+   yarn start --reset-cache
    ```
 ---
 
