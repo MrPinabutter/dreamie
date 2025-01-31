@@ -34,7 +34,7 @@ export const Input = forwardRef<TextInput, InputProps>(
           ref={ref}
           {...rest}
           className={cn(
-            `border border-slate-200 rounded-lg p-3 w-full min-h-12
+            `dark:bg-slate-900 rounded-lg p-3 w-full min-h-12 bg-slate-100
           text-base font-crete dark:border-slate-600 dark:text-slate-50
           dark:placeholder:text-slate-500`,
             icon ? "pr-10" : undefined,

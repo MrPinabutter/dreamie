@@ -75,7 +75,7 @@ export default function App() {
     >
       <StatusBar style="auto" />
 
-      <View className="flex-row justify-between items-center">
+      <View className="flex-row justify-between items-center mb-2">
         <Heading text="Create Dream" />
         <DreamDatePicker date={dreamDate} onDateChange={setDreamDate} />
       </View>
