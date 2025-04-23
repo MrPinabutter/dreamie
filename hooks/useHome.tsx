@@ -4,6 +4,7 @@ import { router } from "expo-router";
 import { useDreams } from "./useDreams";
 import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { ToastAndroid } from "react-native";
 
 export const useHome = () => {
   const { dreams } = useDreams();
@@ -52,6 +53,8 @@ export const useHome = () => {
   const streak = calculateStreak();
 
   const handleRandomDream = () => {
+    if (dreams.length === 0)
+      return ToastAndroid.show("No dreams found", ToastAndroid.SHORT);
     const randomIndex = Math.floor(Math.random() * dreams.length);
     router.push(`/dream/${dreams[randomIndex].id}`);
   };
