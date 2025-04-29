@@ -7,11 +7,6 @@
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
-    "splash": {
-      "image": "./assets/images/dreamie_splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
@@ -65,6 +60,18 @@
               "-DSQLITE_ENABLE_DBSTAT_VTAB=1 -DSQLITE_ENABLE_SNAPSHOT=1"
             ]
           }
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#EDE9FE",
+          "image": "./assets/images/dreamie_splash_light.png",
+          "dark": {
+            "image": "./assets/images/dreamie_splash_dark.png",
+            "backgroundColor": "#2E1065"
+          },
+          "imageWidth": 500
         }
       ]
     ],
